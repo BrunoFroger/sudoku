@@ -1,0 +1,40 @@
+Cette année, vous devez réaliser dans le cadre de votre bureau d’étude la programme d’une application développée en langage C. Votre sujet portera sur le développement du jeu Sudoku et je serai votre tutrice. Vous trouverez ci-dessous quelques règles concernant ce projet :
+    · Déroulement du projet :
+        o   Le projet sera à réaliser entre le 03 novembre 2020 et la mi-janvier 2020, l’évaluation de ce projet comptant pour votre 1er semestre.
+        o   Il faudra effectuer 4 réunions d’avancement. Ces réunions seront effectuées via l’outil Zoom et devront être planifiées les semaines 47, 49, 51 et 7. Pensez à anticiper les prises de rendez-vous. D’une manière générale, je réserverai le jeudi après-midi des semaines 47, 49, 51 et 7 dans mon emploi du temps pour ces réunions, mais si vous préférez un autre créneau dans la semaine et que je suis disponible, il est tout à fait possible de le faire en dehors du jeudi après-midi.
+        o   A l’issue de chaque réunion, un compte-rendu de réunion devra m’être transmis résumant ce qui a été fait durant les 2 semaines précédant la réunion d’avancement, les problèmes qui ont été soulevés lors de la réunion et ce qu’il y a à faire pour la prochaine échéance.
+        o   En dehors des réunions, vous avez également la possibilité de me solliciter par mail (alice.porebski@eilco-ulco.fr) si vous vous sentez bloqués. Si la problématique concerne le code, vous m’enverrez le dossier complet zippé de votre projet en me précisant la nature de votre problème afin que je puisse vous aider.
+    · Evaluation :
+        o   A l’issue de votre projet, vous devrez remettre un rapport d’une quinzaine de page (hors code). Ce rapport devra comporter une introduction, une conclusion, décrire la manière dont le projet a été géré (penser à utiliser les outils qui vous ont été présentés lors du module « Gestion de projet » : mind mapping, matrice FFOM, diagramme de Gantt, bête à cornes, …), la répartition des tâches, les différents algorithmes développés présentés sous forme d’arbre programmatique ou de pseudo-code, les connaissances acquises, les difficultés rencontrées, les améliorations et évolutions possibles.
+        o   A l’issue de votre projet, vous devrez également transmettre l’ensemble des codes source C de votre projet.
+        o   Vous présenterez enfin votre application lors d’une soutenance (pas de PowerPoint nécessaire). Cette soutenance durera 20 minutes : 5 minutes pour la présentation de votre application, 15 minutes où nous vous demanderons de dérouler votre code afin de vous poser individuellement des questions.
+        o   Les dates de remise des rapports, ainsi que des soutenances vous seront communiquées ultérieurement par votre directeur des études.
+    · Logiciel utilisé :
+        o   Il est demandé d’utiliser l’environnement de développement Code blocks. Il s’agit d’un logiciel libre.
+        o   Le fichier pour l’installation ainsi qu’un guide sont disponibles sur l’extranet (Extranet / Onglet « Supports pédagogiques » / Informatique / Télécharger et installer Code Blocks).
+    · Concernant l’application :
+        o   Le programme respectera les règles officielles du jeu (http://fr.wikipedia.org/wiki/Sudoku).
+        o   L’application demandée est à réaliser en mode console.
+        o   L’utilisation de variables globales n’est pas autorisée.
+        o   Le programme sera structuré en fonctions et sous-fonctions au maximum.
+        o   L’accès aux fonctionnalités principales de votre application sera obtenu par l’affichage d’un menu principal :
+            1.       Nouvelle partie
+                a)       Facile
+                b)      Intermédiaire
+                c)       Expert
+            2.       Charger une partie sauvegardée
+            3.       Aide
+            4.       Quitter
+        o   Important : l’application doit pouvoir revenir au menu principal à tout moment.
+        o   Lors d’une nouvelle partie (partie 1. du menu principal), le programme chargera une grille et le joueur pourra la compléter. Une fois la grille remplie on vérifiera les réponses du joueur.
+        o   Une aide concernant les règles du jeu et l’utilisation de votre application doit être disponible (partie 3. du menu principal).
+        o   Une fois que vous avez programmé la partie 1. du menu principal et que le jeu fonctionne, vous devrez proposer la possibilité de sauvegarder une partie en cours ou terminée (partie 2. du menu principal).
+        o   Par la suite, afin d’enrichir votre jeu, vous pourrez proposer de mesurer le temps qu’a duré une partie, et différentes grilles à résoudre de niveaux différents pourront être stockées dans des fichiers.
+    · A savoir :
+        o   Les codes sources devront être commentés et correctement indentés.
+        o   Les codes devront passer avec succès la compilation sans aucun avertissement (warning).
+        o   L’utilisation des pointeurs et des structures sera appréciée, uniquement si elle est maîtrisée.
+        o   Pour le bon déroulement de votre projet, n’hésitez surtout pas à me solliciter si vous êtes bloqués.
+        o   Il est très important que vous codiez vous-mêmes votre projet. Le jury aura la possibilité de voir lors de la soutenance de ce projet si vous êtes capables d’expliquer chaque ligne de code. Chaque membre du trinôme doit être en mesure d’expliquer l’ensemble du code.
+        o   Toute copie de tout ou partie d’un programme récupéré sur Internet, sur un autre projet ou sur d’anciens projets tuteurés sera sanctionnée.
+        o   Bien que le travail soit effectué en trinôme, une notation individuelle reste possible.

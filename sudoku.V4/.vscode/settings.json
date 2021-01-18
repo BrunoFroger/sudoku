@@ -1,0 +1,7 @@
+{
+    "files.associations": {
+        "aide.h": "c",
+        "lirefichier.h": "c",
+        "affichegrille.h": "c"
+    }
+}

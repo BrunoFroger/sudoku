@@ -1,0 +1,9 @@
+bugs a corriger :
+
+
+bugs corriges :
+- lors du chargement d'un fichier dans le menu de selection de niveau de jeu la grille est affichee 2 fois avec message commande inconnue
+
+
+nouvelles fonctionnalite a ecrire
+- génération d'une grille (avec selection de niveau)
