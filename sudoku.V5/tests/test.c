@@ -9,6 +9,7 @@
 
 #include "../inc/grille.h"
 #include "../inc/fichiers.h"
+#include "../inc/partie.h"
 
 int numTest = 0;
 int nbTestsOK = 0;
@@ -204,13 +205,6 @@ int main(int argc, char **argv){
 
     //--------------------------------------------------------
     //
-    //          tests copie de grille
-    //
-    //--------------------------------------------------------
-
-
-    //--------------------------------------------------------
-    //
     //          tests lecture / ecriture de grilles
     //
     //--------------------------------------------------------
@@ -397,69 +391,94 @@ int main(int argc, char **argv){
         grilleDelete(grille2);
     }
 
-/*
+    //--------------------------------------------------------
+    //
+    //          tests copie de grille
+    //
+    //--------------------------------------------------------
+    if (testNew("copieGrile", "test copie de grilles")){
+        char **grilleOrigine = grilleNew();
+        char **grilleDestination = grilleNew();
+        if (lireFichier("../grilles/modeles/grilleFacile",grilleOrigine) == false){
+            testErreur("erreur impossible ouvrir fichier grilleFacile");
+        } else if (lireFichier("../grilles/modeles/grilleFacile",grilleDestination) == false){
+            testErreur("erreur impossible ouvrir fichier grilleFacile");
+        } else {
+            copieGrille(grilleOrigine,grilleDestination);
+            if (compareGrille(grilleOrigine, grilleDestination) == false){
+                testErreur("erreur copie de grille invaide");
+            } else {
+                testOk();
+            }
+        }
+        grilleDelete(grilleOrigine);
+        grilleDelete(grilleDestination);
+    }
+
+
     //--------------------------------------------------------
     //
     //          tests fonction testJeu
     //
     //--------------------------------------------------------
-    if (testNew("testJeu", "fonction de test de jeu (1,1,'1',0) invalide")){
-        if (testJeu(grille,1,1,'1',0) == 1){
+    if (testNew("testJeu", "fonction de test de jeu (0,0,'1',0) invalide")){
+        lireFichier("../grilles/bruno",grille);
+        if (testJeu(grille,0,0,'1',0) == true){
             testErreur("la valeur qui existe deja dans la ligne n'est pas detectee");
         } else {
             testOk();
         }
     }
 
-    if (testNew("testJeu", "tests de la fonction de test de jeu (1,1,'2',0) valide")){
-        if (testJeu(grille,1,1,'2',0) == 0){
+    if (testNew("testJeu", "tests de la fonction de test de jeu (0,0,'2',0) valide")){
+        if (testJeu(grille,0,0,'2',0) == false){
             testErreur("test valide NOK");
         } else {
             testOk();
         }
     }
 
-    if (testNew("testJeu", "tests de la fonction de test de jeu (1,1,'1',1) invalide")){
-        if (testJeu(grille,1,1,'1',1) == 1){
+    if (testNew("testJeu", "tests de la fonction de test de jeu (0,0,'1',1) invalide")){
+        if (testJeu(grille,0,0,'1',1) == true){
             testErreur("test invalide NOK");
         } else {
             testOk();
         }
     }
 
-    if (testNew("testJeu", "tests de la fonction de test de jeu (0,1,'1',1) avec numero de ligne invalide")){
-        if (testJeu(grille,0,1,'1',1) == 1){
+    if (testNew("testJeu", "tests de la fonction de test de jeu (-1,0,'1',1) avec numero de ligne invalide")){
+        if (testJeu(grille,-1,0,'1',1) == true){
             testErreur("test invalide NOK");
         } else {
             testOk();
         }
     }
 
-    if (testNew("testJeu", "tests de la fonction de test de jeu (10,1,'1',1) avec numero de ligne invalide")){
-        if (testJeu(grille,10,1,'1',1) == 1){
+    if (testNew("testJeu", "tests de la fonction de test de jeu (9,0,'1',1) avec numero de ligne invalide")){
+        if (testJeu(grille,9,0,'1',1) == true){
             testErreur("test invalide NOK");
         } else {
             testOk();
         }
     }
 
-    if (testNew("testJeu", "tests de la fonction de test de jeu (1,0,'1',1) avec numero de colonne invalide")){
-        if (testJeu(grille,1,0,'1',1) == 1){
+    if (testNew("testJeu", "tests de la fonction de test de jeu (0,-1,'1',1) avec numero de colonne invalide")){
+        if (testJeu(grille,0,-1,'1',1) == true){
             testErreur("test invalide NOK");
         } else {
             testOk();
         }
     }
 
-    if (testNew("testJeu", "tests de la fonction de test de jeu (1,10,'1',1) avec numero de colonne invalide")){
-        if (testJeu(grille,1,10,'1',1) == 1){
+    if (testNew("testJeu", "tests de la fonction de test de jeu (0,9,'1',1) avec numero de colonne invalide")){
+        if (testJeu(grille,0,9,'1',1) == true){
             testErreur("test invalide NOK");
         } else {
             testOk();
         }
     }
 
-
+/*
     //--------------------------------------------------------
     //
     //          autres fonction  de test a trier et valider

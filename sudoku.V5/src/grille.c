@@ -12,20 +12,7 @@
 #include "../inc/grille.h"
 
 
-char grilleInitiale[81] = 
-        {
-            ' ', ' ', ' ',      ' ', ' ', ' ',      ' ', ' ', ' ',
-            ' ', ' ', ' ',      ' ', ' ', ' ',      ' ', ' ', ' ',
-            ' ', ' ', ' ',      ' ', ' ', ' ',      ' ', ' ', ' ',
-
-            ' ', ' ', ' ',      ' ', ' ', ' ',      ' ', ' ', ' ',
-            ' ', ' ', ' ',      ' ', ' ', ' ',      ' ', ' ', ' ',
-            ' ', ' ', ' ',      ' ', ' ', ' ',      ' ', ' ', ' ',
-
-            ' ', ' ', ' ',      ' ', ' ', ' ',      ' ', ' ', ' ',
-            ' ', ' ', ' ',      ' ', ' ', ' ',      ' ', ' ', ' ',
-            ' ', ' ', ' ',      ' ', ' ', ' ',      ' ', ' ', ' ',
-        };
+char grilleInitiale[TAILLEGRILLE][TAILLEGRILLE];
 
 int lastLigne=8;
 int lastColonne=8;
@@ -36,13 +23,20 @@ int lastColonne=8;
 //
 //--------------------------------------------------------
 void initGrilleInitiale(void){
-    int index = 0;
+    //int index = 0;
 
+    for (int i = 0 ; i < TAILLEGRILLE ; i++){
+        for (int j = 0 ; j < TAILLEGRILLE ; j++){
+            grilleInitiale[i][j] = ' ';
+        }
+    }
+    /*
     while (index < 81){
         //printf("grille.initGrilleInitiale => reset de la case %d \n", index);
         grilleInitiale[index] = ' ';
         index++;
     }
+    */
 }
 
 //--------------------------------------------------------
@@ -152,7 +146,7 @@ bool grilleSetInitiale(char **grille){
     } else {
         for (int lig = 0 ; lig < NBLIGNES ; lig++){
             for (int col = 0 ; col < NBCOLONNES ; col++){
-                grilleInitiale[lig*8+col] = grille[lig][col];
+                grilleInitiale[lig][col] = grille[lig][col];
             }
         }
     }
@@ -170,7 +164,7 @@ bool grilleLoadInitiale(char **grille){
     } else {
         for (int lig = 0 ; lig < NBLIGNES ; lig++){
             for (int col = 0 ; col < NBCOLONNES ; col++){
-                grille[lig][col] = grilleInitiale[lig*9+col];
+                grille[lig][col] = grilleInitiale[lig][col];
             }
         }
     }
@@ -289,20 +283,20 @@ bool grilleTestRegionValide(char **grille, int ligneRegion, int colonneRegion){
 bool grilleValide(char **grille){
     for (int lig = 0 ; lig < TAILLEGRILLE ; lig++){
         if (grilleTestLigneValide(grille,lig) == false) {
-            //printf("grilleValide => erreur : la ligne %d n'est pas valide\n", lig);
+            printf("grilleValide => erreur : la ligne %d n'est pas valide\n", lig+1);
             return false;
         }
     }
     for (int col = 0 ; col < TAILLEGRILLE ; col++){
         if (grilleTestColonneValide(grille,col) == false){
-            //printf("grilleValide => erreur : la colonne %d n'est pas valide\n", col);
+            printf("grilleValide => erreur : la colonne %d n'est pas valide\n", col+1);
             return false;
         }
     }
     for (int ligneRegion = 0 ; ligneRegion < TAILLEGRILLE/3 ; ligneRegion++){
         for (int colonneRegion = 0 ; colonneRegion < TAILLEGRILLE/3 ; colonneRegion++){
             if (grilleTestRegionValide(grille, ligneRegion, colonneRegion) == false){
-                //printf("grilleValide => erreur : la region %d,%d n'est pas valide\n", ligneRegion, colonneRegion);
+                printf("grilleValide => erreur : la region %d,%d n'est pas valide\n", ligneRegion+1, colonneRegion+1);
                 return false;
             }
         }
@@ -338,11 +332,11 @@ void afficheGrille(char **grille){
     for (int ligne = 0 ; ligne < 9 ; ligne++){
         printf("%d |", ligne + 1);
         for (int colonne = 0 ; colonne < 9 ; colonne++){
-            //if (grilleInitiale[ligne*8+colonne] != ' '){
-            //    couleur("31");
-            //}
+            if (grilleInitiale[ligne][colonne] != ' '){
+                couleur("31");
+            }
             printf(" %c ",grille[ligne][colonne]);
-            //couleur("0");
+            couleur("0");
             printf("|");
             if ((colonne == 2) || (colonne == 5)) printf("|");
         }
@@ -366,6 +360,19 @@ bool compareGrille(char **grille1, char **grille2){
     return true;
 }
 
+//--------------------------------------------------------
+//
+//         C O P I E G R I L L E
+//
+//--------------------------------------------------------
+void copieGrille(char **grilleOrigine, char **grilleDestination){
+    for (int ligne = 0 ; ligne < TAILLEGRILLE ; ligne++){
+        for (int colonne = 0 ; colonne < TAILLEGRILLE ; colonne++){
+            grilleDestination[ligne][colonne] = grilleOrigine[ligne][colonne];
+        }
+    }
+}
+
 
 //--------------------------------------------------------
 //
@@ -376,7 +383,7 @@ void afficheGrilleInitiale(void){
     char **grilleTmp = grilleNew();
     for (int i = 0 ; i < TAILLEGRILLE ; i++){
         for (int j = 0 ; j < TAILLEGRILLE ; j++){
-            grilleTmp[i][j] = grilleInitiale[i*8+j];
+            grilleTmp[i][j] = grilleInitiale[i][j];
         }
     }
     afficheGrille(grilleTmp);

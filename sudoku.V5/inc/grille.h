@@ -12,7 +12,7 @@
 #define NBLIGNES        TAILLEGRILLE
 #define NBCOLONNES      TAILLEGRILLE
 
-extern char grilleInitiale[81];
+extern char grilleInitiale[TAILLEGRILLE][TAILLEGRILLE];
 extern int lastLigne;
 extern int lastColonne;
 
@@ -33,6 +33,7 @@ extern bool grillePleine(char **grille);
 extern bool grilleValide(char **grille);
 extern void afficheGrille(char **grille);
 extern bool compareGrille(char **grille1, char **grille2);
+extern void copieGrille(char **grilleOrigine, char **grilleDestination);
 extern void afficheGrilleInitiale(void);
 
 #endif

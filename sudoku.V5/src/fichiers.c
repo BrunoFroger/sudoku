@@ -23,10 +23,10 @@ bool lireFichier(char *nomFichier, char **grille){
         //printf("Chargement du fichier %s \n",nomFichier);
         for (int ligne = 0 ; ligne < TAILLEGRILLE ; ligne ++){
             for (int colonne = 0 ; colonne < 9 ; colonne ++){
-                printf("lireFichier => car lu en %d,%d = %c\n",ligne, colonne, car);
+                //printf("lireFichier => car lu en %d,%d = %c\n",ligne, colonne, car);
                 car = fgetc(fichier);
                 grille[ligne][colonne] = car;
-                grilleInitiale[ligne*8+colonne] = car;
+                grilleInitiale[ligne][colonne] = car;
             }
         }
         fclose(fichier);

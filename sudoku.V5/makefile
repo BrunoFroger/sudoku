@@ -24,6 +24,8 @@ tests/tests.o : tests/test.c
 
 tests/tests : tests/tests.o \
 	obj/fichiers.o \
+	obj/partie.o \
+	obj/aide.o \
 	obj/grille.o
 	$(CC) -o $@ $^ $(LDFLAGS)
 
@@ -31,11 +33,22 @@ sudoku: $(OBJ)
 	$(CC) -o $@ $^ $(LDFLAGS)
 
 sudoku.o : \
+	obj/fichiers.o \
+	obj/partie.o \
+	obj/aide.o \
+	grille.h
+	
+partie.o : \
 	fichiers.h \
+	aide.h \
 	grille.h
 	
 grille.o : \
-	fichiers.h 
+	fichiers.h \
+	grille.h
+
+fichier.o : \
+	grille.h
 
 $(OBJDIR)/%.o: $(SRCDIR)/%.c 
 	$(CC) -o $@ -c $< $(CFLAGS)

@@ -44,7 +44,7 @@ int main(int argc, char **argv){
             return 0;
         } else {
             lireFichier(argv[1], grille);
-            //jouePartie(grille);
+            jouePartie(grille);
         }
         //return 0;
     }
@@ -57,7 +57,7 @@ int main(int argc, char **argv){
         printf("3 : Aide\n");
         printf("4 : genere une grille\n");
         printf("5 : affiche partie\n");
-        printf("5 : affiche grille initiale\n");
+        printf("6 : affiche grille initiale\n");
         printf("9 : Quitter\n");
         printf("votre choix : ");
         scanf("%s",tmpSaisie);
@@ -73,7 +73,7 @@ int main(int argc, char **argv){
             case '2' :
                 // chargement d'une partie existante, sauvegardee
                 if (chargePartie(grille) != false){
-                //    jouePartie(grille);
+                    jouePartie(grille);
                 }
                 afficheGrille(grille);
                 break;
