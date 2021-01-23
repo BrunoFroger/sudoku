@@ -29,7 +29,7 @@ bool chargePartie(char **grille){
 //
 //--------------------------------------------------------
 bool testJeu(char **grille, int ligne, int colonne, char valeur, bool silence){
-    printf("partie.c:testJeu => test de %c en %d,%d", valeur, ligne, colonne);
+    printf("partie.c:testJeu => test de %c en %d,%d\n", valeur, ligne, colonne);
     if ((ligne < 0) | (ligne > 8)){
         printf("Erreur : numero de ligne invalide\n");
         return false;
@@ -44,10 +44,13 @@ bool testJeu(char **grille, int ligne, int colonne, char valeur, bool silence){
     }
     char **grilleTmp = grilleNew();
     copieGrille(grille, grilleTmp);
-    grilleSetValeur(grilleTmp, ligne, colonne, valeur);
+    bool resultat = false;
+    if (grilleSetValeur(grilleTmp, ligne, colonne, valeur) == true) {
+        if (grilleValide(grilleTmp) == true){
+            resultat = true;
+        }
+    }
     //afficheGrille(grilleTmp);
-    bool resultat = grilleValide(grilleTmp);
-    grilleDelete(grilleTmp);
     return resultat;
 
 }

@@ -478,6 +478,42 @@ int main(int argc, char **argv){
         }
     }
 
+    if (testNew("testJeu", "tests d'ecriture sur une case de la grille initiale (0,2,'7',1) ")){
+        lireFichier("../grilles/bruno",grille);
+        if (testJeu(grille,0,2,'7',1) == true){
+            testErreur("test invalide NOK");
+        } else {
+            testOk();
+        }
+    }
+
+    if (testNew("testJeu", "tests de modification d'une case (0,0,'2',1) puis (0,0,'4',1)")){
+        lireFichier("../grilles/bruno",grille);
+        if (testJeu(grille,0,0,'7',1) == true){
+            if (testJeu(grille,0,0,'4',1) == true){
+                testOk();
+            } else {
+                testErreur("test invalide NOK");
+            }
+        } else {
+            testErreur("test invalide NOK");
+        }
+    }
+
+    if (testNew("testJeu", "tests jeu derniere valeur grille complete (8,8,'4',1)")){
+        lireFichier("../grilles/modeles/grillePresquePleine",grille);
+        if (testJeu(grille,8,8,'4',1) == true){
+            grilleSetValeur(grille,8,8,'4');
+            if (grillePleine(grille) == true){
+                testOk();
+            } else {
+                testErreur("test invalide NOK : grille non pleine");
+            }
+        } else {
+            testErreur("test invalide NOK : jeu invalide");
+        }
+    }
+
 /*
     //--------------------------------------------------------
     //
