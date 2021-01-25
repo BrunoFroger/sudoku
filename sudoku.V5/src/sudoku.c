@@ -12,6 +12,7 @@
 #include "../inc/fichiers.h"
 #include "../inc/aide.h"
 #include "../inc/partie.h"
+#include "../inc/generateur.h"
 
 //--------------------------------------------------------
 //
@@ -50,7 +51,7 @@ int main(int argc, char **argv){
     }
 
     // affichage du menu de choix
-    while (choixMenu != '9'){
+    while (choixMenu != '0'){
         printf("\nMenu principal\n");
         printf("1 : Nouvelle partie\n");
         printf("2 : Charger une partie sauvegardée\n");
@@ -58,7 +59,7 @@ int main(int argc, char **argv){
         printf("4 : genere une grille\n");
         printf("5 : affiche partie\n");
         printf("6 : affiche grille initiale\n");
-        printf("9 : Quitter\n");
+        printf("0 : Quitter\n");
         printf("votre choix : ");
         scanf("%s",tmpSaisie);
         choixMenu=tmpSaisie[0];
@@ -68,7 +69,7 @@ int main(int argc, char **argv){
         switch(choixMenu){
             case '1' :
                 // lancement d'une nouvelle partie  
-                //nouvellePartie(grille);
+                nouvellePartie(grille);
                 break;
             case '2' :
                 // chargement d'une partie existante, sauvegardee
@@ -83,7 +84,7 @@ int main(int argc, char **argv){
                 break;
             case '4':
                 // genere un egrille
-                //generateur(grille);
+                generateur(grille);
                 break;
             case '5':
                 // affiche un egrille
@@ -93,7 +94,7 @@ int main(int argc, char **argv){
                 // affiche la grille initiale
                 afficheGrilleInitiale();
                 break;
-            case '9':
+            case '0':
                 // quitte le jeu
                 printf("fin de partie\n");
                 break;

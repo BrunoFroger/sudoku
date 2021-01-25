@@ -116,7 +116,7 @@ bool grilleResetValeur(char **grille, int ligne, int colonne){
     if (grille == NULL){
         return false;
     } else {
-        grille[ligne][colonne] = ' ';
+        grille[ligne][colonne] = grilleInitiale[ligne][colonne];
     }
     return true;
 }
@@ -284,23 +284,23 @@ bool grilleTestRegionValide(char **grille, int ligneRegion, int colonneRegion){
 //          G R I L L E V A L I D E
 //
 //--------------------------------------------------------
-bool grilleValide(char **grille){
+bool grilleValide(char **grille, bool silence){
     for (int lig = 0 ; lig < TAILLEGRILLE ; lig++){
         if (grilleTestLigneValide(grille,lig) == false) {
-            printf("grilleValide => erreur : la ligne %d n'est pas valide\n", lig+1);
+            if (!silence) printf("grilleValide => erreur : la ligne %d n'est pas valide\n", lig+1);
             return false;
         }
     }
     for (int col = 0 ; col < TAILLEGRILLE ; col++){
         if (grilleTestColonneValide(grille,col) == false){
-            printf("grilleValide => erreur : la colonne %d n'est pas valide\n", col+1);
+            if (!silence) printf("grilleValide => erreur : la colonne %d n'est pas valide\n", col+1);
             return false;
         }
     }
     for (int ligneRegion = 0 ; ligneRegion < TAILLEGRILLE/3 ; ligneRegion++){
         for (int colonneRegion = 0 ; colonneRegion < TAILLEGRILLE/3 ; colonneRegion++){
             if (grilleTestRegionValide(grille, ligneRegion, colonneRegion) == false){
-                printf("grilleValide => erreur : la region %d,%d n'est pas valide\n", ligneRegion+1, colonneRegion+1);
+                if (!silence) printf("grilleValide => erreur : la region %d,%d n'est pas valide\n", ligneRegion+1, colonneRegion+1);
                 return false;
             }
         }

@@ -25,6 +25,7 @@ tests/tests.o : tests/test.c
 tests/tests : tests/tests.o \
 	obj/fichiers.o \
 	obj/partie.o \
+	obj/generateur.o \
 	obj/aide.o \
 	obj/grille.o
 	$(CC) -o $@ $^ $(LDFLAGS)
@@ -35,6 +36,7 @@ sudoku: $(OBJ)
 sudoku.o : \
 	obj/fichiers.o \
 	obj/partie.o \
+	obj/generateur.o \
 	obj/aide.o \
 	grille.h
 	
@@ -48,6 +50,10 @@ grille.o : \
 	grille.h
 
 fichier.o : \
+	grille.h
+
+generateur.o : \
+	partie.h \
 	grille.h
 
 $(OBJDIR)/%.o: $(SRCDIR)/%.c 

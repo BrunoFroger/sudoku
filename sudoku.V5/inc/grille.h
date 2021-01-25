@@ -30,7 +30,7 @@ extern bool grilleTestColonneValide(char **grille, int colonne);
 extern bool grilleTestRegionValide(char **grille, int ligneRegion, int clonneRegion);
 extern bool testListeValide(char *liste);
 extern bool grillePleine(char **grille);
-extern bool grilleValide(char **grille);
+extern bool grilleValide(char **grille, bool silence);
 extern void afficheGrille(char **grille);
 extern bool compareGrille(char **grille1, char **grille2);
 extern void copieGrille(char **grilleOrigine, char **grilleDestination);

@@ -10,6 +10,7 @@
 #include "../inc/grille.h"
 #include "../inc/fichiers.h"
 #include "../inc/partie.h"
+#include "../inc/generateur.h"
 
 int numTest = 0;
 int nbTestsOK = 0;
@@ -266,7 +267,7 @@ int main(int argc, char **argv){
     //--------------------------------------------------------
     if (testNew("grilleValide", "test grille valide sur grille vide")){
         char **grilleTmp = grilleNew();
-        if (grilleValide(grilleTmp) == false){
+        if (grilleValide(grilleTmp,false) == false){
             testErreur("erreur grille vide consideree comme non valide");
         } else {
             testOk();
@@ -279,7 +280,7 @@ int main(int argc, char **argv){
         if (lireFichier("../grilles/modeles/grilleFacile",grilleTmp) == false){
             testErreur("erreur impossible ouvrir fichier grilleFacile");
         } else {
-            if (grilleValide(grilleTmp) == false){
+            if (grilleValide(grilleTmp,false) == false){
                 testErreur("erreur grille vide consideree comme non valide");
             } else {
                 testOk();
@@ -293,7 +294,7 @@ int main(int argc, char **argv){
         if (lireFichier("../grilles/modeles/grillePleine",grilleTmp) == false){
             testErreur("erreur impossible ouvrir fichier grilleFacile");
         } else {
-            if (grilleValide(grilleTmp) == false){
+            if (grilleValide(grilleTmp,false) == false){
                 testErreur("erreur grille vide consideree comme non valide");
             } else {
                 testOk();
@@ -309,7 +310,7 @@ int main(int argc, char **argv){
         } else {
             grilleSetValeur(grilleTmp, 0, 0, '1');
             //afficheGrille(grilleTmp);
-            if (grilleValide(grilleTmp) != false){
+            if (grilleValide(grilleTmp,false) != false){
                 testErreur("erreur grille vide consideree comme non valide");
             } else {
                 testOk();
@@ -325,7 +326,7 @@ int main(int argc, char **argv){
         } else {
             grilleSetValeur(grilleTmp, 0, 0, '6');
             //afficheGrille(grilleTmp);
-            if (grilleValide(grilleTmp) != false){
+            if (grilleValide(grilleTmp,false) != false){
                 testErreur("erreur grille vide consideree comme non valide");
             } else {
                 testOk();
@@ -341,7 +342,7 @@ int main(int argc, char **argv){
         } else {
             grilleSetValeur(grilleTmp, 5, 1, '3');
             //afficheGrille(grilleTmp);
-            if (grilleValide(grilleTmp) != false){
+            if (grilleValide(grilleTmp,false) != false){
                 testErreur("erreur grille vide consideree comme non valide");
             } else {
                 testOk();
@@ -415,6 +416,125 @@ int main(int argc, char **argv){
         grilleDelete(grilleDestination);
     }
 
+    //--------------------------------------------------------
+    //
+    //          tests listes
+    //
+    //--------------------------------------------------------
+    if (testNew("testListeValide", "tests unicite dans une liste de 9 valeurs valide")){
+        char listeValeurValide[9]={'1','2','3','4','5','6','7','8','9'};
+        if (testListeValide(listeValeurValide) == false){
+            testErreur("erreur calcul unicite liste de valeurs valide");
+        } else {
+            testOk();
+        }
+    }
+
+    if (testNew("testListeValide", "tests unicite dans une liste de 9 valeurs invalide")){
+        char listeValeurInvalide[9]={'1','2','3','4','1','6','7','8','9'};
+        if (testListeValide(listeValeurInvalide) == true){
+            testErreur("erreur calcul unicite liste de valeurs invalide");
+        } else {
+            testOk();
+        }
+    }
+
+    if (testNew("testListeValide", "tests unicite dans une liste de 9 valeurs incomplete")){
+        char listeValeurIncomplete[9]={'1',' ','3','4',' ','6','7','8','9'};
+        if (testListeValide(listeValeurIncomplete) != true){
+            testErreur("erreur calcul unicite liste incomplete de valeurs valide");
+        } else {
+            testOk();
+        }
+    }
+
+    if (testNew("grilleTestLigneValide", "test validité ligne (0) de 9 valeurs incomplete")){
+        if (grilleTestLigneValide(grille,0) != true){
+            testErreur("erreur calcul unicite liste incomplete de valeurs valide");
+        } else {
+            testOk();
+        }
+    }
+    
+    if (testNew("grilleTestLigneValide", "test validité ligne (6) de 9 valeurs incomplete")){
+        if (grilleTestLigneValide(grille,6) != true){
+            testErreur("erreur calcul unicite liste incomplete de valeurs valide");
+        } else {
+            testOk();
+        }
+    }
+    
+    if (testNew("grilleTestColonneValide", "test validité colonne (0) de 9 valeurs incomplete")){
+        if (grilleTestColonneValide(grille,0) != true){
+            testErreur("erreur calcul unicite liste incomplete de valeurs valide");
+        } else {
+            testOk();
+        }
+    }
+    
+    if (testNew("grilleTestColonneValide", "test validité colonne (6) de 9 valeurs incomplete")){
+        if (grilleTestColonneValide(grille,6) != true){
+            testErreur("erreur calcul unicite liste incomplete de valeurs valide");
+        } else {
+            testOk();
+        }
+    }
+
+    if (testNew("grilleTestRegionValide", "test validité region (0,0) de 9 valeurs incomplete")){
+        if (grilleTestRegionValide(grille,0,0) != true){
+            testErreur("erreur calcul unicite liste incomplete de valeurs valide");
+        } else {
+            testOk();
+        }
+    }
+
+    if (testNew("grilleTestRegionValide", "test validité region (1,2) de 9 valeurs incomplete")){
+        if (grilleTestRegionValide(grille,1,2) != true){
+            testErreur("erreur calcul unicite liste incomplete de valeurs valide");
+        } else {
+            testOk();
+        }
+    }
+
+    if (testNew("grilleTestRegionValide", "test validité region (2,2) de 9 valeurs incomplete")){
+        if (grilleTestRegionValide(grille,2,2) != true){
+            testErreur("erreur calcul region (2,2) incomplete valide");
+        } else {
+            testOk();
+        }
+    }
+
+    if (testNew("grilleTestRegionValide", "test validité region (0,0) de 9 valeurs complete")){
+        lireFichier("bruno",grille);
+        grilleSetValeur(grille,0,0,'2');
+        grilleSetValeur(grille,0,1,'4');
+        grilleSetValeur(grille,1,1,'7');
+        grilleSetValeur(grille,1,2,'6');
+        grilleSetValeur(grille,2,1,'5');
+        grilleSetValeur(grille,2,2,'8');
+        //afficheGrille(grille);
+        if (grilleTestRegionValide(grille,0,0) != true){
+            testErreur("erreur calcul region complete valide");
+        } else {
+            testOk();
+        }
+    }
+
+    if (testNew("grilleTestRegionValide", "test validité region (0,0) de 9 valeurs complete invalide")){
+        lireFichier("bruno",grille);
+        grilleSetValeur(grille,0,0,'2');
+        grilleSetValeur(grille,0,1,'4');
+        grilleSetValeur(grille,1,1,'7');
+        grilleSetValeur(grille,1,2,'6');
+        grilleSetValeur(grille,2,1,'1');
+        grilleSetValeur(grille,2,2,'8');
+        //afficheGrille(grille);
+        if (grilleTestRegionValide(grille,0,0) == true){
+            testErreur("erreur calcul region complete invalide");
+        } else {
+            testOk();
+        }
+    }
 
     //--------------------------------------------------------
     //
@@ -514,139 +634,93 @@ int main(int argc, char **argv){
         }
     }
 
-/*
+
     //--------------------------------------------------------
     //
-    //          autres fonction  de test a trier et valider
+    //          fonction solve
     //
     //--------------------------------------------------------
-    
-    if (testNew("solve", "recherche d'une solution d'un fichier valide")){
-        int resultat = solve(grille, 1);
-        if (resultat != 1){
-            char tmpChaine[250];
-            sprintf(tmpChaine,"erreur pas de solution trouvee pour une grille valide nbSolutions = %d",resultat);
-            testErreur(tmpChaine);
+    if (testNew("solve", "tests resolution d'une grille valide manque 1 valeur")){
+        lireFichier("../grilles/modeles/grillePresquePleine",grille);
+        if (solve(grille, true) == true){
+            if (grillePleine(grille)){
+                testOk();
+            } else {
+                testErreur("test NOK : la grille n'est pas finie");
+            }
         } else {
-            testOk();
+            testErreur("test NOK : solve n'a pas de solution");
         }
     }
 
-    if (testNew("testListeValide", "tests unicite dans une liste de 9 valeurs valide")){
-        char listeValeurValide[9]={'1','2','3','4','5','6','7','8','9'};
-        if (testListeValide(listeValeurValide) == -1){
-            testErreur("erreur calcul unicite liste de valeurs valide");
+    if (testNew("solve", "tests resolution d'une grille valide manque 2 valeurs")){
+        lireFichier("../grilles/modeles/grillePresquePleine1",grille);
+        if (solve(grille, true) == true){
+            if (grillePleine(grille)){
+                testOk();
+            } else {
+                testErreur("test NOK : la grille n'est pas finie");
+            }
         } else {
-            testOk();
+            testErreur("test NOK : solve n'a pas de solution");
         }
     }
 
-    if (testNew("testListeValide", "tests unicite dans une liste de 9 valeurs invalide")){
-        char listeValeurInvalide[9]={'1','2','3','4','1','6','7','8','9'};
-        if (testListeValide(listeValeurInvalide) == 0){
-            testErreur("erreur calcul unicite liste de valeurs invalide");
+    if (testNew("solve", "tests resolution d'une grille valide manque 3 valeurs")){
+        lireFichier("../grilles/modeles/grillePresquePleine2",grille);
+        if (solve(grille, true) == true){
+            if (grillePleine(grille)){
+                testOk();
+            } else {
+                testErreur("test NOK : la grille n'est pas finie");
+            }
         } else {
-            testOk();
+            testErreur("test NOK : solve n'a pas de solution");
         }
     }
 
-    if (testNew("testListeValide", "tests unicite dans une liste de 9 valeurs incomplete")){
-        char listeValeurIncomplete[9]={'1',' ','3','4',' ','6','7','8','9'};
-        if (testListeValide(listeValeurIncomplete) != 0){
-            testErreur("erreur calcul unicite liste incomplete de valeurs valide");
+    if (testNew("solve", "tests resolution d'une grille facile")){
+        lireFichier("../grilles/modeles/grilleFacile",grille);
+        if (solve(grille, true) == true){
+            if (grillePleine(grille)){
+                testOk();
+            } else {
+                testErreur("test NOK : la grille n'est pas finie");
+            }
         } else {
-            testOk();
+            testErreur("test NOK : solve n'a pas de solution");
         }
     }
 
-    if (testNew("grilleTestLigneValide", "test validité ligne (0) de 9 valeurs incomplete")){
-        if (grilleTestLigneValide(grille,0) != 0){
-            testErreur("erreur calcul unicite liste incomplete de valeurs valide");
+    if (testNew("solve", "tests resolution d'une grille difficile")){
+        lireFichier("../grilles/modeles/grilleExpert",grille);
+        if (solve(grille, true) == true){
+            if (grillePleine(grille)){
+                testOk();
+            } else {
+                testErreur("test NOK : la grille n'est pas finie");
+            }
         } else {
-            testOk();
-        }
-    }
-    
-    if (testNew("grilleTestLigneValide", "test validité ligne (6) de 9 valeurs incomplete")){
-        if (grilleTestLigneValide(grille,6) != 0){
-            testErreur("erreur calcul unicite liste incomplete de valeurs valide");
-        } else {
-            testOk();
-        }
-    }
-    
-    if (testNew("grilleTestColonneValide", "test validité colonne (0) de 9 valeurs incomplete")){
-        if (grilleTestColonneValide(grille,0) != 0){
-            testErreur("erreur calcul unicite liste incomplete de valeurs valide");
-        } else {
-            testOk();
-        }
-    }
-    
-    if (testNew("grilleTestColonneValide", "test validité colonne (6) de 9 valeurs incomplete")){
-        if (grilleTestColonneValide(grille,6) != 0){
-            testErreur("erreur calcul unicite liste incomplete de valeurs valide");
-        } else {
-            testOk();
+            testErreur("test NOK : solve n'a pas de solution");
         }
     }
 
-    if (testNew("grilleTestRegionValide", "test validité region (0,0) de 9 valeurs incomplete")){
-        if (grilleTestRegionValide(grille,0,0) != 0){
-            testErreur("erreur calcul unicite liste incomplete de valeurs valide");
-        } else {
+    //--------------------------------------------------------
+    //
+    //          generateur
+    //
+    //--------------------------------------------------------
+    if (testNew("generateur", "tests generation de liste de valeur")){
+        char liste[9];
+        initGenerateur(grille);
+        genereListeValeur(liste);
+        if (testListeValide(liste) == true){
             testOk();
+        } else {
+            testErreur("test NOK : liste generee invalide");
         }
     }
 
-    if (testNew("grilleTestRegionValide", "test validité region (1,2) de 9 valeurs incomplete")){
-        if (grilleTestRegionValide(grille,1,2) != 0){
-            testErreur("erreur calcul unicite liste incomplete de valeurs valide");
-        } else {
-            testOk();
-        }
-    }
-
-    if (testNew("grilleTestRegionValide", "test validité region (2,2) de 9 valeurs incomplete")){
-        if (grilleTestRegionValide(grille,2,2) != 0){
-            testErreur("erreur calcul region (2,2) incomplete valide");
-        } else {
-            testOk();
-        }
-    }
-
-    if (testNew("grilleTestRegionValide", "test validité region (0,0) de 9 valeurs complete")){
-        lireFichier("bruno",grille);
-        grilleSetValeur(grille,0,0,'2');
-        grilleSetValeur(grille,0,1,'4');
-        grilleSetValeur(grille,1,1,'7');
-        grilleSetValeur(grille,1,2,'6');
-        grilleSetValeur(grille,2,1,'5');
-        grilleSetValeur(grille,2,2,'8');
-        //afficheGrille(grille);
-        if (grilleTestRegionValide(grille,0,0) != 0){
-            testErreur("erreur calcul region complete valide");
-        } else {
-            testOk();
-        }
-    }
-
-    if (testNew("grilleTestRegionValide", "test validité region (0,0) de 9 valeurs complete invalide")){
-        lireFichier("bruno",grille);
-        grilleSetValeur(grille,0,0,'2');
-        grilleSetValeur(grille,0,1,'4');
-        grilleSetValeur(grille,1,1,'7');
-        grilleSetValeur(grille,1,2,'6');
-        grilleSetValeur(grille,2,1,'1');
-        grilleSetValeur(grille,2,2,'8');
-        //afficheGrille(grille);
-        if (grilleTestRegionValide(grille,0,0) == 0){
-            testErreur("erreur calcul region complete invalide");
-        } else {
-            testOk();
-        }
-    }
-*/
     printf("-------------------------------------------------\n");
     testBilan();
     //getchar();

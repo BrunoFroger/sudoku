@@ -11,6 +11,7 @@
 #include "../inc/aide.h"
 #include "../inc/aide.h"
 
+
 //--------------------------------------------------------
 //
 //          C H A R G E P A R T I E
@@ -46,7 +47,7 @@ bool testJeu(char **grille, int ligne, int colonne, char valeur, bool silence){
     copieGrille(grille, grilleTmp);
     bool resultat = false;
     if (grilleSetValeur(grilleTmp, ligne, colonne, valeur) == true) {
-        if (grilleValide(grilleTmp) == true){
+        if (grilleValide(grilleTmp,false) == true){
             resultat = true;
         }
     }
@@ -61,20 +62,55 @@ bool testJeu(char **grille, int ligne, int colonne, char valeur, bool silence){
 //
 //--------------------------------------------------------
 bool solve(char **grille, bool silence){
+    if (!silence){
+        printf("+----------------------------\n");
+        printf("|\n");
+        printf("|      Solve => debut\n");
+        printf("|\n");
+        printf("+----------------------------\n");
+        //afficheGrille(grille);
+        //getchar();
+    }
+    if (grillePleine(grille)) return true;
     for (int i = 0 ; i < TAILLEGRILLE ; i++){
         for (int j = 0 ; j < TAILLEGRILLE ; j++){
             if (grille[i][j] == ' '){
-                for (char val = '1' ; val < '9' ; val++){
+                for (char val = '1' ; val <= '9' ; val++){
+                    if (!silence) printf("solve => test %c en %d,%d \n", val, i, j);
                     grilleSetValeur(grille, i,j,val);
-                    if (grilleValide(grille)){
-                        solve(grille,silence);
+                    if (!silence){
+                        //afficheGrille(grille);
+                        //getchar();
+                    }
+                    if (grilleValide(grille,true)){
+                        if (!silence) printf("grilleValide => OK\n");
+                        if (solve(grille,silence)){
+                            if (!silence) printf("return solve true : return true\n");
+                            if (grillePleine(grille)) return true;
+                            break;
+                        } else {
+                            if (!silence) printf("return solve false : on continue avec %d,%d\n", i, j);
+                            grilleResetValeur(grille, i, j);
+                        }
                     } else {
+                        if (!silence) printf("grilleValide => : NOK\n");
                         grilleResetValeur(grille, i, j);
-                        return true;
                     }
                 }
+                if (!silence) {
+                    printf("solve => on a epuise toutes les valeurs pour la case %d,%d\n", i, j);
+                    //afficheGrille(grille);
+                    //getchar();
+                }
+                return false;
             }
         }
+        if (!silence) {
+            printf("solve => on a fini la ligne %d\n", i);
+            //afficheGrille(grille);
+            //getchar();
+        }
+        if (i == 8) getchar();
     }
     return false;
 }
@@ -114,10 +150,11 @@ void jouePartie(char **grille){
             sauvegarde(grille);
             finJeu=1;
         } else if (strncmp(saisie,"solution",8) == 0){
-            int nbSolutions = solve(grille,true);
-            if (nbSolutions != 0){
-                printf("Il existe %d solutions a cette grille\n",nbSolutions);
-            }
+            //int nbSolutions = 
+            solve(grille,true);
+            //if (nbSolutions != 0){
+            //    printf("Il existe %d solutions a cette grille\n",nbSolutions);
+            //}
         } else if (strncmp(saisie,"jeu",3) == 0){
             ligne = saisie[4] - '0';
             colonne = saisie[6] - '0';
@@ -145,5 +182,41 @@ void jouePartie(char **grille){
         } else {
             printf("ERREUR : commande de jeu inconnue (tapez aide)\n");
         }
+    }
+}
+
+//--------------------------------------------------------
+//
+//          N O U V E L L E P A R T I E
+//
+//--------------------------------------------------------
+void nouvellePartie(char **grille){
+    char tmpSaisie[5];
+    char niveauPartie;
+    char nomFichier[25];
+    printf("selection du niveau de jeu\n");
+    printf("a : Facile\n");
+    printf("b : Intermédiaire\n");
+    printf("c : Expert\n");
+    printf("votre choix : ");
+    scanf("%s",tmpSaisie);
+    printf("\n");
+    niveauPartie=tmpSaisie[0];
+    //niveauPartie = getchar();
+    getchar(); // captation du retour chariot 
+    if (niveauPartie == 'a'){
+        strcpy(nomFichier, "modeles/grilleFacile");
+        lireFichier(nomFichier,grille);
+        jouePartie(grille);
+    } else if (niveauPartie == 'b'){
+        strcpy(nomFichier, "modeles/grilleIntermediaire");
+        lireFichier(nomFichier,grille);
+        jouePartie(grille);
+    } else if (niveauPartie == 'c'){
+        strcpy(nomFichier, "modeles/grilleExpert");
+        lireFichier(nomFichier,grille);
+        jouePartie(grille);
+    } else {
+        printf("valeur Erronée\n");
     }
 }
