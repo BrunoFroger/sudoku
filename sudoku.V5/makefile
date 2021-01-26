@@ -27,6 +27,7 @@ tests/tests : tests/tests.o \
 	obj/partie.o \
 	obj/generateur.o \
 	obj/aide.o \
+	obj/solve.o \
 	obj/grille.o
 	$(CC) -o $@ $^ $(LDFLAGS)
 
@@ -37,6 +38,7 @@ sudoku.o : \
 	obj/fichiers.o \
 	obj/partie.o \
 	obj/generateur.o \
+	obj/solve.o \
 	obj/aide.o \
 	grille.h
 	

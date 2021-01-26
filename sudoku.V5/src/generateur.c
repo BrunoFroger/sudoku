@@ -8,6 +8,7 @@
 
 #include "../inc/grille.h"
 #include "../inc/partie.h"
+#include "../inc/solve.h"
 
 int isInit = 0;
 long graineRandom;
@@ -27,6 +28,7 @@ void initGenerateur(char **grille){
         graineRandom = time(NULL) * 20431;
         // on initialise une grille vide
         grilleResetAll(grille);
+        initGrilleInitiale();
         //printf("generateur.init => grille vide generee\n");
 
         //initGrilleInitiale();
@@ -139,9 +141,9 @@ void ajouteUneValeur(char **grille){
         if (grille[lig][col] == ' '){
             value = getRandomValue() + '1';
             printf("ajouteUneValeur -> test %c en %d,%d\n", value, lig, col);
-            if (testJeu(grille, lig + 1, col + 1, value + 1, 0) == 1){
+            if (testJeu(grille, lig, col, value, 1) == true){
                 finBoucle = 1;
-                grille[lig][col] = value;
+                grilleSetValeur(grille, lig, col, value);
                 printf("ajouteUneValeur -> testJeu OK : ajout de %c en %d,%d\n", value, lig, col);
             } else {
                 printf("ajouteUneValeur -> testJeu KO pour %c en %d,%d\n", value, lig, col);
@@ -161,9 +163,10 @@ void ajouteUneValeur(char **grille){
 int generateur(char **grille){
     int nbSolutions = 0;
     int nbTentatives = 100;
+    bool finDeBoucle = false;
 
     initGenerateur(grille);
-    while ((nbSolutions =! 1) || (nbTentatives >= 0)){
+    while (!finDeBoucle){
         printf("generateur -> tentative %d\n", nbTentatives);
         nbTentatives--;
 
@@ -174,11 +177,17 @@ int generateur(char **grille){
         afficheGrille(grille);
         printf("generateur -> ajoute une valeur fin\n");
 
-        nbSolutions = solve(grille, 1);
+        char **grilleTmp = grilleNew();
+        copieGrille(grille, grilleTmp);
+        nbSolutions = solve(grilleTmp, false);
+        grilleDelete(grilleTmp);
         printf("generateur -> fin de boucle nbSolutions = %d ; nbTentatives = %d\n", nbSolutions, nbTentatives);
+        if (nbInvocations <= 0) finDeBoucle = true;
+        if (nbSolutions == 1) finDeBoucle = true;
 
-        getchar();
+        //getchar();
     }
+    afficheGrille(grille);
     return nbSolutions;
 }
 
@@ -211,36 +220,6 @@ int generateurOld(char **grille){
 
     int nbSolutions = calculGenerateur(grille, grilleTmp);
 
-    /*
-    for (ligne = 0 ; ligne < 9 ; ligne ++){
-        for (colonne = 0 ; colonne < 9 ; colonne ++){
-            for (int idxVal = 0 ; idxVal < 9 ; idxVal++){
-                grilleTmp[ligne][colonne] = listeValeur[idxVal];
-                afficheGrille(grilleTmp);
-                nbSolutions = solve(grilleTmp,1);
-                if (nbSolutions == 1){
-                    printf("generateur => on a trouve une grille valide\n");
-                    // on recopie la grille 
-                    for (int i = 0 ; i < 9 ; i++){
-                        grilleTmp[i]=malloc(9 * sizeof(char));
-                        for (int j = 0 ; j < 9 ; j++){
-                            grille[i][j] = grilleTmp[i][j];
-                        }
-                    }
-                    return 1;
-                } else {
-                    printf("Cette grille est invalide nb solutions = %d\n",nbSolutions);
-                    // on lance le générateur 
-                }
-                getchar();getchar();    
-                // liberation de la mémoire allouée
-                for (int i = 0 ; i < 9 ; i++){
-                    free(grilleTmp[i]);
-                }
-                free(grilleTmp);
-            }
-        }
-    }*/
     // liberation de la mémoire allouée
     printf("generateur => on desalloue la memoire de grilleTmp\n");
     for (int i = 0 ; i < 9 ; i++){

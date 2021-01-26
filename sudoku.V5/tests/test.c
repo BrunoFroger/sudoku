@@ -11,6 +11,7 @@
 #include "../inc/fichiers.h"
 #include "../inc/partie.h"
 #include "../inc/generateur.h"
+#include "../inc/solve.h"
 
 int numTest = 0;
 int nbTestsOK = 0;
@@ -260,6 +261,69 @@ int main(int argc, char **argv){
         }
     }
     
+    //--------------------------------------------------------
+    //
+    //          tests set/reset valeurs
+    //
+    //--------------------------------------------------------
+    if (testNew("grilleSetValeur", "test set valeur dans une case vide")){
+        char **grille = grilleNew();
+        initGrilleInitiale();
+        if (grilleSetValeur(grille, 0 ,0, '1') == false){
+            testErreur("erreur imposible de modifier cette case");
+        } else {
+            testOk();
+        }
+    }
+    
+    if (testNew("grilleSetValeur", "test set valeur dans une case non vide")){
+        char **grille = grilleNew();
+        initGrilleInitiale();
+        if (lireFichier("../grilles/modeles/grillepleine", grille) != false){
+            if (grilleSetValeur(grille, 0 ,0, '1') == false){
+                testOk();
+            } else {
+                testErreur("erreur imposible de modifier cette case");
+            }
+        } else {
+            testErreur("erreur fichier grille pleine non trouvee");
+        }
+    }
+    
+    if (testNew("grilleSetValeur", "test reset valeur dans une case autorisee")){
+        char **grille = grilleNew();
+        initGrilleInitiale();
+        if (lireFichier("../grilles/modeles/grilleFacile", grille) != false){
+            grilleSetValeur(grille, 0 ,0, '1');
+            afficheGrille(grille);
+            if (grilleSetValeur(grille, 0 ,0, '2') == true){
+            afficheGrille(grille);
+                testOk();
+            } else {
+                testErreur("erreur imposible de modifier cette case");
+            }
+        } else {
+            testErreur("erreur fichier grille pleine non trouvee");
+        }
+    }
+    
+    if (testNew("grilleSetValeur", "test reset valeur dans une case autorisee")){
+        char **grille = grilleNew();
+        initGrilleInitiale();
+        if (lireFichier("../grilles/modeles/grilleFacile", grille) != false){
+            grilleSetValeur(grille, 0 ,0, '1');
+            afficheGrille(grille);
+            if (grilleResetValeur(grille, 0 ,0) == true){
+            afficheGrille(grille);
+                testOk();
+            } else {
+                testErreur("erreur imposible de modifier cette case");
+            }
+        } else {
+            testErreur("erreur fichier grille pleine non trouvee");
+        }
+    }
+
     //--------------------------------------------------------
     //
     //          tests validite de grille
@@ -642,7 +706,9 @@ int main(int argc, char **argv){
     //--------------------------------------------------------
     if (testNew("solve", "tests resolution d'une grille valide manque 1 valeur")){
         lireFichier("../grilles/modeles/grillePresquePleine",grille);
-        if (solve(grille, true) == true){
+        int nbSolutions = solve(grille, true);
+        printf("Nombre de solutions trouvées = %d\n\n", nbSolutions);
+        if (nbSolutions == 1){
             if (grillePleine(grille)){
                 testOk();
             } else {
@@ -655,7 +721,7 @@ int main(int argc, char **argv){
 
     if (testNew("solve", "tests resolution d'une grille valide manque 2 valeurs")){
         lireFichier("../grilles/modeles/grillePresquePleine1",grille);
-        if (solve(grille, true) == true){
+        if (solve(grille, true) == 1){
             if (grillePleine(grille)){
                 testOk();
             } else {
@@ -668,7 +734,7 @@ int main(int argc, char **argv){
 
     if (testNew("solve", "tests resolution d'une grille valide manque 3 valeurs")){
         lireFichier("../grilles/modeles/grillePresquePleine2",grille);
-        if (solve(grille, true) == true){
+        if (solve(grille, true) == 1){
             if (grillePleine(grille)){
                 testOk();
             } else {
@@ -681,7 +747,7 @@ int main(int argc, char **argv){
 
     if (testNew("solve", "tests resolution d'une grille facile")){
         lireFichier("../grilles/modeles/grilleFacile",grille);
-        if (solve(grille, true) == true){
+        if (solve(grille, true) == 1){
             if (grillePleine(grille)){
                 testOk();
             } else {
@@ -694,7 +760,7 @@ int main(int argc, char **argv){
 
     if (testNew("solve", "tests resolution d'une grille difficile")){
         lireFichier("../grilles/modeles/grilleExpert",grille);
-        if (solve(grille, true) == true){
+        if (solve(grille, true) == 1){
             if (grillePleine(grille)){
                 testOk();
             } else {
@@ -718,6 +784,44 @@ int main(int argc, char **argv){
             testOk();
         } else {
             testErreur("test NOK : liste generee invalide");
+        }
+    }
+    
+    if (testNew("generateur", "tests generation 1000 nombres aléatoires")){
+        initGenerateur(grille);
+        bool testAleatoireOK = true;
+        for (int i = 0 ; i < 1000 ; i++){
+            int valeur = getRandomValue();
+            if ((valeur < 0) || (valeur > 8)){
+                testAleatoireOK = false;
+                printf("nombre genere NOK = %d\n", valeur);
+            }
+        }
+        if (testAleatoireOK){
+            testOk();
+        } else {
+            testErreur("test NOK : nombre aléatoire genere invalide");
+        }
+    }
+    
+    if (testNew("generateur", "tests generation liste 9 valeurs differentes")){
+        initGenerateur(grille);
+        char listeValeurs[9];
+        genereListeValeur(listeValeurs);
+        if (testListeValide(listeValeurs)){
+            testOk();
+        } else {
+            testErreur("test NOK : liste nombres aléatoire genere invalide");
+        }
+    }
+    
+    if (testNew("generateur", "tests generation d'une grille")){
+        initGenerateur(grille);
+        char **grille = grilleNew();
+        if (generateur(grille)){
+            testOk();
+        } else {
+            testErreur("test NOK : generation d'une grille invalide");
         }
     }
 

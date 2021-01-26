@@ -99,7 +99,8 @@ bool grilleSetValeur(char **grille, int ligne, int colonne, char valeur){
         return false;
     } else {
         if (grilleInitiale[ligne][colonne] != ' '){
-            printf("Erreur : Impossible de modifier une valeur initiale\n");
+            printf("Erreur : Impossible de modifier une valeur initiale <%c en %d,%d>\n", valeur, ligne, colonne);
+            //getchar();
             return false;
         }
         grille[ligne][colonne] = valeur;

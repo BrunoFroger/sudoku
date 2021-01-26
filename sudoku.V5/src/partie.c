@@ -9,7 +9,7 @@
 #include "../inc/fichiers.h"
 #include "../inc/grille.h"
 #include "../inc/aide.h"
-#include "../inc/aide.h"
+#include "../inc/solve.h"
 
 
 //--------------------------------------------------------
@@ -56,6 +56,7 @@ bool testJeu(char **grille, int ligne, int colonne, char valeur, bool silence){
 
 }
 
+/*
 //--------------------------------------------------------
 //
 //          S O L V E
@@ -114,7 +115,7 @@ bool solve(char **grille, bool silence){
     }
     return false;
 }
-
+*/
 //--------------------------------------------------------
 //
 //          J O U E P A R T I E
