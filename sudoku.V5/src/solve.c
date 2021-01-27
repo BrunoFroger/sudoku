@@ -7,9 +7,10 @@
 #include <time.h>
 
 
-#include "../inc/testJeu.h"
-#include "../inc/afficheGrille.h"
+#include "../inc/partie.h"
 #include "../inc/grille.h"
+
+#define NB_MAX_INVOCATIONS  100000
 
 int nbSolveInvocations = 0;
 int nbSolutions = 0;
@@ -21,55 +22,58 @@ char **grilleResultat;
 //          C A L C U L S O L V E
 //
 //--------------------------------------------------------
-int calculSolve(char **grille, int lig, int col){
+bool calculSolve(char **grille, int lig, int col, bool silence){
     //printf("===============================================================\n");
     //printf("solve => debut recherche de solution de la grille en %d,%d\n", lig, col);
-    //afficheGrille(grille);
-    //getchar();
+    if (!silence){
+        afficheGrille(grille);
+        getchar();
+    }
     nbSolveInvocations++;
-    if (nbSolveInvocations > 1000000) { // trop d'iterations sans resultats, on annule la recherche
-        printf("trop d'invocation de recherche, on annule la recherche\n");
-        return 0;
+    if (nbSolveInvocations > NB_MAX_INVOCATIONS) { // trop d'iterations sans resultats, on annule la recherche
+        printf("trop d'invocation de recherche (%d), on annule la recherche\n", NB_MAX_INVOCATIONS);
+        return false;
     }     
     for (int ligne = 0 ; ligne < 9 ; ligne ++){
         for (int colonne = 0 ; colonne < 9 ; colonne ++){
             if (grille[ligne][colonne] == ' '){
                 // cette case est a trouver 
                 for (int val = '1' ; val <= '9' ; val++){
-                    //printf("solve => test de %c en %d,%d\n", val, lig, col);
-                    if (testJeu(grille,ligne, colonne, val, 1) == 1){   // mode silence
-                    //if (testJeu(grille,ligne, colonne, val, 0) == 1){   // mode bavard
+                    if (!silence) printf("solve => test de %c en %d,%d\n", val, ligne, colonne);
+                    if (testJeu(grille,ligne, colonne, val, silence) == true){   // mode normal
+                    //if (testJeu(grille,ligne, colonne, val, false) == true){   // mode bavard
                         grille[ligne][colonne] = val;
-                        if (calculSolve(grille, ligne, colonne) == 0){
-                            //printf("solve => %c NOK en %d,%d\n", val, ligne, colonne);
-                            grille[ligne][colonne] = grilleInitiale[ligne*9+colonne];
+                        if (calculSolve(grille, ligne, colonne, silence) == false){
+                            if (!silence) printf("solve => %c NOK en %d,%d\n", val, ligne, colonne);
+                            grille[ligne][colonne] = grilleInitiale[ligne][colonne];
                         } else {
-                            //("solve => %c OK en %d,%d\n", val, ligne, colonne);
-                            if ((ligne == lastLigne) && (colonne == lastColonne)) {
-                                printf(".");
+                            if (!silence) printf("solve => %c OK en %d,%d\n", val, ligne, colonne);
+                            //if ((ligne == lastLigne) && (colonne == lastColonne)) {
+                            if (grillePleine(grille)){ 
+                                if (!silence) printf(".");
                                 nbSolutions ++;
                             }
                             // on sauvegarde cette grille comme resultat
                             for (int i = 0 ; i < 9 ; i++){
                                 for (int j = 0 ; j < 9 ; j++){
-                                    grilleResultat[i][j]= grille[i][j];
+                                    grilleResultat[i][j] = grille[i][j];
                                 }
                             }
                         }
                     }
                 }
                 //printf("solve => NOK : on a teste toutes les valeurs possibles pour la case %d,%d \n", ligne, colonne);
-                grille[ligne][colonne] = grilleInitiale[ligne*9+colonne];
-                return 0;
+                grille[ligne][colonne] = grilleInitiale[ligne][colonne];
+                return false;
             }
         }
     }
-    if (nbSolutions >= 1){
+    if (nbSolutions >= 0){
         printf("solve => nb solutions trouvees : %d \n", nbSolutions);
-        return 1;
+        return true;
     } else {
       printf("solve => pas de solutions trouvees fin \n");
-      return 0;
+      return false;
     }
 }
 
@@ -82,7 +86,6 @@ void initSolve(void){
     nbSolveInvocations = 0;
     nbSolutions = 0;
 
-    initGrilleInitiale();
     //printf("Solve(init) => derniere case libre %d,%d (%c)\n", lastLigne, lastColonne, car);
 }
 
@@ -103,22 +106,17 @@ void bilanSolve(void){
 //          S O L V E
 //
 //--------------------------------------------------------
-int solve(char **grille, int modeSilence){
+int solve(char **grille, bool modeSilence){
     clockTime = clock();
 
     // allocation de la memoire pour la grille de jeu
-    grilleResultat = malloc(9 * sizeof(char*));
-    for (int i = 0 ; i < 9 ; i++){
-        grilleResultat[i]=malloc(9 * sizeof(char));
-        for (int j = 0 ; j < 9 ; j++){
-            grilleResultat[i][j] = ' ';
-        }
-    }
+    grilleResultat = grilleNew();
     initSolve();
-    calculSolve(grille, 0, 0);
-    printf("\n");
+    //calculSolve(grille, 0, 0, modeSilence);
+    calculSolve(grille, 0, 0, modeSilence);
     clockTime = clock() - clockTime;
-    if (modeSilence == 0){
+    if (!modeSilence){
+        printf("\n");
         bilanSolve();
     }
     // restauration de la grille resultat dans la grille
@@ -128,9 +126,6 @@ int solve(char **grille, int modeSilence){
         }
     }  
     // liberation de la mémoire allouée
-    for (int i = 0 ; i < 9 ; i++){
-        free(grilleResultat[i]);
-    }
-    free(grilleResultat);
+    grilleDelete(grilleResultat);
     return nbSolutions;
 }

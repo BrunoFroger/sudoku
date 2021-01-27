@@ -79,12 +79,13 @@ void genereListeValeur(char *liste){
     }
 }
 
+/*
 //--------------------------------------------------------
 //
 //          C A L C U L G E N E R A T E U R
 //
 //--------------------------------------------------------
-int calculGenerateur(char **grille, char **grilleTmp){
+int calculGenerateur(char **grille, char **grilleTmp, bool modeSilence){
     int nbSolutions = 0;
     int finBoucle;
     while (nbSolutions != 1){
@@ -99,8 +100,9 @@ int calculGenerateur(char **grille, char **grilleTmp){
                 // la case est vide on met une valeur aleatoire
                 char val = getRandomValue() + '1';
                 printf("generateur.calculGenerateur => lig=%d, col=%d, val= %c\n", lig, col, val);
-                if (testJeu(grilleTmp, lig + 1, col + 1, val, 0) == 1){
-                    grille[lig][col] = val;
+                if (testJeu(grilleTmp, lig, col, val, true) == true){
+                    //grille[lig][col] = val;
+                    grilleSetValeur(grille,lig,col,val);
                     finBoucle = 0;
                 }
             } else {
@@ -115,7 +117,7 @@ int calculGenerateur(char **grille, char **grilleTmp){
         if (nbSolutions > 1){
             // trop de solutions trouvées, on continue d'ajouter des valeurs dans la grille
             printf("generateur.calculGenerateur => Grille avec %d solutions, on continue en remplissant une nouvelle case\n", nbSolutions);
-            calculGenerateur(grille, grilleTmp);
+            calculGenerateur(grille, grilleTmp, modeSilence);
         } else if (nbSolutions == 0) {
             // plus aucune solution avec cete grille
             // il faut changer la valeur de la derniere 
@@ -123,36 +125,36 @@ int calculGenerateur(char **grille, char **grilleTmp){
     }
     return 0;
 }
-
+*/
 
 //--------------------------------------------------------
 //
 //          A J O U T E U N E V A L E U R
 //
 //--------------------------------------------------------
-void ajouteUneValeur(char **grille){
+void ajouteUneValeur(char **grille, bool modeSilence){
     int finBoucle = 0;
     int lig, col;
-    printf("ajouteUneValeur -> debut\n");
+    if (!modeSilence) printf("ajouteUneValeur -> debut\n");
     while (finBoucle == 0){
         lig = getRandomValue();
         col = getRandomValue();
         char value = '0';
         if (grille[lig][col] == ' '){
             value = getRandomValue() + '1';
-            printf("ajouteUneValeur -> test %c en %d,%d\n", value, lig, col);
-            if (testJeu(grille, lig, col, value, 1) == true){
+            if (!modeSilence) printf("ajouteUneValeur -> test %c en %d,%d\n", value, lig, col);
+            if (testJeu(grille, lig, col, value, modeSilence) == true){
                 finBoucle = 1;
                 grilleSetValeur(grille, lig, col, value);
-                printf("ajouteUneValeur -> testJeu OK : ajout de %c en %d,%d\n", value, lig, col);
+                if (!modeSilence) printf("ajouteUneValeur -> testJeu OK : ajout de %c en %d,%d\n", value, lig, col);
             } else {
-                printf("ajouteUneValeur -> testJeu KO pour %c en %d,%d\n", value, lig, col);
+                if (!modeSilence) printf("ajouteUneValeur -> testJeu KO pour %c en %d,%d\n", value, lig, col);
             }
         } else {
-            printf("ajouteUneValeur -> la case %d,%d n'est pas vide (%c)\n", lig, col, value);
+            if (!modeSilence) printf("ajouteUneValeur -> la case %d,%d n'est pas vide (%c)\n", lig, col, value);
         }
     }
-    printf("ajouteUneValeur -> fin\n");
+    if (!modeSilence) printf("ajouteUneValeur -> fin\n");
 }
 
 //--------------------------------------------------------
@@ -173,24 +175,30 @@ int generateur(char **grille){
         printf("generateur -> ajoute une valeur debut\n");
         afficheGrille(grille);
 
-        ajouteUneValeur(grille);
+        ajouteUneValeur(grille, true);
         afficheGrille(grille);
         printf("generateur -> ajoute une valeur fin\n");
 
         char **grilleTmp = grilleNew();
         copieGrille(grille, grilleTmp);
-        nbSolutions = solve(grilleTmp, false);
+        nbSolutions = solve(grilleTmp, true);
         grilleDelete(grilleTmp);
         printf("generateur -> fin de boucle nbSolutions = %d ; nbTentatives = %d\n", nbSolutions, nbTentatives);
-        if (nbInvocations <= 0) finDeBoucle = true;
-        if (nbSolutions == 1) finDeBoucle = true;
-
+        if (nbTentatives <= 0) {
+            printf("generateur => nombre max d'invocation\n");
+            finDeBoucle = true;
+            }
+        if (nbSolutions == 1) {
+            printf("generateur => 1 solution unique trouvee\n");
+            finDeBoucle = true;
+            }
         //getchar();
     }
     afficheGrille(grille);
     return nbSolutions;
 }
 
+/*
 //--------------------------------------------------------
 //
 //          G E N E R A T E U R
@@ -218,7 +226,7 @@ int generateurOld(char **grille){
     }
     printf("generateur => allocation memoire grilleTmp fin\n");
 
-    int nbSolutions = calculGenerateur(grille, grilleTmp);
+    int nbSolutions = calculGenerateur(grille, grilleTmp, true);
 
     // liberation de la mémoire allouée
     printf("generateur => on desalloue la memoire de grilleTmp\n");
@@ -228,7 +236,7 @@ int generateurOld(char **grille){
     free(grilleTmp);
     return nbSolutions;
 }
-
+*/
 /*
 Fonction generation  (parametre :  grille , nbCases) retourne une  grille
     copier grille dans newGrille 

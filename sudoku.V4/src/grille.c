@@ -234,7 +234,7 @@ int grilleTestLigneValide(char **grille, int ligne){
         for (int idx = 0 ; idx < TAILLEGRILLE ; idx++){
             listeValeurs[idx] = grille[ligne][idx];
         }
-        displayListe(listeValeurs);
+        //displayListe(listeValeurs);
         return testListeValide(listeValeurs);
     }    
 }

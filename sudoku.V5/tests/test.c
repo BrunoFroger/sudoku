@@ -20,9 +20,11 @@ int nbTestsNA = 0;
 int nbTestsExec = 0;
 char nomFonction[50];
 char nomTest[200];
+bool modePasAPas = false;
 int stopOnErreur = 0;
 int testToExecute[100];
 int idxTestToExecute=0;
+bool blocExecute;
 
 //--------------------------------------------------------
 //
@@ -33,6 +35,10 @@ void testErreur(char *message){
     printf("ERREUR => test %2d -> dans la fonction %s : %s\n", numTest, nomFonction, message);
     nbTestsKO++;
     if (stopOnErreur != 0) exit(0);
+    if (modePasAPas){
+        printf("Fin de test => appuyez sur entree pour continuer : ");
+        getchar();
+    }
 }
 
 //--------------------------------------------------------
@@ -43,6 +49,10 @@ void testErreur(char *message){
 void testOk(void){
     printf("test %2d OK -> fonction %s\n", numTest, nomTest);
     nbTestsOK++;
+    if (modePasAPas){
+        printf("Fin d'un bloc de tests => appuyez sur entree pour continuer");
+        getchar();
+    }
 }
 
 //--------------------------------------------------------
@@ -85,13 +95,19 @@ void testBilan(void){
 //          S E T T E S T
 //
 //--------------------------------------------------------
-bool setTest(char *fonction, char *nom){
+bool setTest(char *fonction, char *nom, bool execute){
     printf("-------------------------------------------------\n");
     printf("nouveau Test (%d) : %s\n", numTest, nom);
     strcpy(nomTest, nom);
     strcpy(nomFonction, fonction);
-    nbTestsExec++;
-    return true;
+    if (execute){
+        nbTestsExec++;
+        return true;
+    } else {
+        printf("Test non execute (NA)\n");
+        nbTestsNA++;
+        return false;
+    }
 }
 
 //--------------------------------------------------------
@@ -99,16 +115,16 @@ bool setTest(char *fonction, char *nom){
 //          T E S T N E W
 //
 //--------------------------------------------------------
-bool testNew(char *fonction, char *nom){
+bool testNew(char *fonction, char *nom, bool execute){
     numTest++;
     if (idxTestToExecute > 0){
         for (int i = 0 ; i < idxTestToExecute ; i++){
             if (numTest == testToExecute[i]){
-                return setTest(fonction, nom);
+                return setTest(fonction, nom, execute);
             } 
         }    
     } else {
-        return setTest(fonction, nom);
+        return setTest(fonction, nom, execute);
     }
     nbTestsNA++;
     return false;
@@ -137,6 +153,7 @@ int main(int argc, char **argv){
                 printf("parametres disponibles :\n");
                 printf("  aide : cette aide\n");
                 printf("  test xx : execution du test numero xx\n");
+                printf("  pap     : mode pas a pas, pause apres chaque test\n");
             } else if (strcmp(parametre, "test") == 0){
                 // execution de tests spéciifiés
                 char numTestChar[10];
@@ -155,6 +172,8 @@ int main(int argc, char **argv){
                 break;
             } else if (strcmp(parametre, "stopOnError") == 0){
                 stopOnErreur = 1 ;
+            } else if (strcmp(parametre, "pap") == 0){
+                modePasAPas = true ;
             } else if (strcmp(parametre, "") == 0){
                 // 
             } else {
@@ -167,9 +186,15 @@ int main(int argc, char **argv){
     }
 
     //--------------------------------------------------------
+    //--------------------------------------------------------
+    //--------------------------------------------------------
+    //
     //
     //          Debut des tests
     //
+    //
+    //--------------------------------------------------------
+    //--------------------------------------------------------
     //--------------------------------------------------------
     printf("=================================================\n");
     printf("Tests du programme Sudoku\n");
@@ -179,7 +204,8 @@ int main(int argc, char **argv){
     //          tests creation/suppression de grille
     //
     //--------------------------------------------------------
-    if (testNew("grilleDelete", "suppression d'une grille qui n'existe pas")){
+    blocExecute = false;
+    if (testNew("grilleDelete", "suppression d'une grille qui n'existe pas", blocExecute)){
         if (grilleDelete(grille) != false){
             testErreur("erreur suppression d'une grille qui existe");
         } else {
@@ -188,7 +214,7 @@ int main(int argc, char **argv){
     }
 
     grille = grilleNew();
-    if (testNew("grilleNew", "creation d'une grille vide")){
+    if (testNew("grilleNew", "creation d'une grille vide", blocExecute)){
         if (grille == NULL){
             testErreur("erreur creation d'une grille");
         } else {
@@ -196,21 +222,38 @@ int main(int argc, char **argv){
         }
     }
 
-    if (testNew("grilleDelete", "suppression d'une grille qui existe")){
+    if (testNew("grilleDelete", "suppression d'une grille qui existe", blocExecute)){
         if (grilleDelete(grille) != true){
             testErreur("erreur suppression d'une grille qui existe");
         } else {
             testOk();
         }
     }
-    grille = grilleNew();
 
+    if (testNew("grilleNew", "verification des valeurs initiales d'une nouvelle grille", blocExecute)){
+        bool resultat = true;
+        char ** grilleTmp = grilleNew();
+        for (int lig = 0 ; lig < TAILLEGRILLE ; lig ++){
+            for (int col = 0 ; col < TAILLEGRILLE ; col++){
+                if (grilleTmp[lig][col] != ' ') resultat = false;
+            }
+        }
+        if (!resultat){
+            testErreur("erreur la grile ne contient pas que des ' '");
+        } else {
+            testOk();
+        }
+        grilleDelete(grilleTmp);
+    }
+    grille = grilleNew();
+    
     //--------------------------------------------------------
     //
     //          tests lecture / ecriture de grilles
     //
     //--------------------------------------------------------
-    if (testNew("lireFichier", "lecture de fichier modele valide")){
+    blocExecute = false;
+    if (testNew("lireFichier", "lecture de fichier modele valide", blocExecute)){
         char nomFichier[50] = "../grilles/modeles/grilleFacile";
         if (lireFichier(nomFichier, grille) == false){
             testErreur("erreur ouverture fichier valide");
@@ -219,7 +262,7 @@ int main(int argc, char **argv){
         }
     }
 
-    if (testNew("lireFichier", "lecture de fichier valide")){
+    if (testNew("lireFichier", "lecture de fichier valide", blocExecute)){
         if (lireFichier("../grilles/bruno", grille) == false){
             testErreur("erreur ouverture fichier valide");
         } else {
@@ -227,20 +270,21 @@ int main(int argc, char **argv){
         }
     }
 
-    if (testNew("lireFichier", "lecture de fichier invalide")){
+    if (testNew("lireFichier", "lecture de fichier invalide", blocExecute)){
         if (lireFichier("../grilles/brunozzz", grille) == true){
             testErreur("erreur on a reussi a ouvrir un fichier invalide");
         } else {
             testOk();
         }
     }
-
+    
     //--------------------------------------------------------
     //
     //          tests grille pleine ou non pleine
     //
     //--------------------------------------------------------
-    if (testNew("grillePleine", "test grille pleine sur grille non pleine")){
+    blocExecute = false;
+    if (testNew("grillePleine", "test grille pleine sur grille non pleine", blocExecute)){
         lireFichier("../grilles/modele/facile", grille);
         if (grillePleine(grille) == false){
             testOk();
@@ -249,7 +293,7 @@ int main(int argc, char **argv){
         }
     }
 
-    if (testNew("grillePleine", "test grille pleine sur grille pleine")){
+    if (testNew("grillePleine", "test grille pleine sur grille pleine", blocExecute)){
         if (lireFichier("../grilles/modeles/grillepleine", grille) != false){
             if (grillePleine(grille) == true){
                 testOk();
@@ -266,7 +310,8 @@ int main(int argc, char **argv){
     //          tests set/reset valeurs
     //
     //--------------------------------------------------------
-    if (testNew("grilleSetValeur", "test set valeur dans une case vide")){
+    blocExecute = false;
+    if (testNew("grilleSetValeur", "test set valeur dans une case vide", blocExecute)){
         char **grille = grilleNew();
         initGrilleInitiale();
         if (grilleSetValeur(grille, 0 ,0, '1') == false){
@@ -276,7 +321,7 @@ int main(int argc, char **argv){
         }
     }
     
-    if (testNew("grilleSetValeur", "test set valeur dans une case non vide")){
+    if (testNew("grilleSetValeur", "test set valeur dans une case non vide", blocExecute)){
         char **grille = grilleNew();
         initGrilleInitiale();
         if (lireFichier("../grilles/modeles/grillepleine", grille) != false){
@@ -290,14 +335,12 @@ int main(int argc, char **argv){
         }
     }
     
-    if (testNew("grilleSetValeur", "test reset valeur dans une case autorisee")){
+    if (testNew("grilleSetValeur", "test reset valeur dans une case autorisee", blocExecute)){
         char **grille = grilleNew();
         initGrilleInitiale();
         if (lireFichier("../grilles/modeles/grilleFacile", grille) != false){
             grilleSetValeur(grille, 0 ,0, '1');
-            afficheGrille(grille);
             if (grilleSetValeur(grille, 0 ,0, '2') == true){
-            afficheGrille(grille);
                 testOk();
             } else {
                 testErreur("erreur imposible de modifier cette case");
@@ -307,14 +350,12 @@ int main(int argc, char **argv){
         }
     }
     
-    if (testNew("grilleSetValeur", "test reset valeur dans une case autorisee")){
+    if (testNew("grilleSetValeur", "test reset valeur dans une case autorisee", blocExecute)){
         char **grille = grilleNew();
         initGrilleInitiale();
         if (lireFichier("../grilles/modeles/grilleFacile", grille) != false){
             grilleSetValeur(grille, 0 ,0, '1');
-            afficheGrille(grille);
             if (grilleResetValeur(grille, 0 ,0) == true){
-            afficheGrille(grille);
                 testOk();
             } else {
                 testErreur("erreur imposible de modifier cette case");
@@ -323,13 +364,14 @@ int main(int argc, char **argv){
             testErreur("erreur fichier grille pleine non trouvee");
         }
     }
-
+    
     //--------------------------------------------------------
     //
     //          tests validite de grille
     //
     //--------------------------------------------------------
-    if (testNew("grilleValide", "test grille valide sur grille vide")){
+    blocExecute = false;
+    if (testNew("grilleValide", "test grille valide sur grille vide", blocExecute)){
         char **grilleTmp = grilleNew();
         if (grilleValide(grilleTmp,false) == false){
             testErreur("erreur grille vide consideree comme non valide");
@@ -339,7 +381,7 @@ int main(int argc, char **argv){
         grilleDelete(grilleTmp);
     }
 
-    if (testNew("grilleValide", "test grille valide sur grille facile")){
+    if (testNew("grilleValide", "test grille valide sur grille facile", blocExecute)){
         char **grilleTmp = grilleNew();
         if (lireFichier("../grilles/modeles/grilleFacile",grilleTmp) == false){
             testErreur("erreur impossible ouvrir fichier grilleFacile");
@@ -353,7 +395,7 @@ int main(int argc, char **argv){
         grilleDelete(grilleTmp);
     }
 
-    if (testNew("grilleValide", "test grille valide sur grille pleine")){
+    if (testNew("grilleValide", "test grille valide sur grille pleine", blocExecute)){
         char **grilleTmp = grilleNew();
         if (lireFichier("../grilles/modeles/grillePleine",grilleTmp) == false){
             testErreur("erreur impossible ouvrir fichier grilleFacile");
@@ -367,7 +409,7 @@ int main(int argc, char **argv){
         grilleDelete(grilleTmp);
     }
 
-    if (testNew("grilleValide", "test grille avec ligne incorrecte sur grille facile")){
+    if (testNew("grilleValide", "test grille avec ligne incorrecte sur grille facile", blocExecute)){
         char **grilleTmp = grilleNew();
         if (lireFichier("../grilles/modeles/grilleFacile",grilleTmp) == false){
             testErreur("erreur impossible ouvrir fichier grilleFacile");
@@ -383,7 +425,7 @@ int main(int argc, char **argv){
         grilleDelete(grilleTmp);
     }
     
-    if (testNew("grilleValide", "test grille avec colonne incorrecte sur grille facile")){
+    if (testNew("grilleValide", "test grille avec colonne incorrecte sur grille facile", blocExecute)){
         char **grilleTmp = grilleNew();
         if (lireFichier("../grilles/modeles/grilleFacile",grilleTmp) == false){
             testErreur("erreur impossible ouvrir fichier grilleFacile");
@@ -399,7 +441,7 @@ int main(int argc, char **argv){
         grilleDelete(grilleTmp);
     }
         
-    if (testNew("grilleValide", "test grille avec region incorrecte sur grille facile")){
+    if (testNew("grilleValide", "test grille avec region incorrecte sur grille facile", blocExecute)){
         char **grilleTmp = grilleNew();
         if (lireFichier("../grilles/modeles/grilleFacile",grilleTmp) == false){
             testErreur("erreur impossible ouvrir fichier grilleFacile");
@@ -420,7 +462,8 @@ int main(int argc, char **argv){
     //          tests comparaison de grilles
     //
     //--------------------------------------------------------
-    if (testNew("compareGrille", "test comparaison de grilles identiques")){
+    blocExecute = false;
+    if (testNew("compareGrille", "test comparaison de grilles identiques", blocExecute)){
         char **grille1 = grilleNew();
         char **grille2 = grilleNew();
         if (lireFichier("../grilles/modeles/grilleFacile",grille1) == false){
@@ -438,7 +481,7 @@ int main(int argc, char **argv){
         grilleDelete(grille2);
     }
 
-    if (testNew("compareGrille", "test comparaison de grilles differentes")){
+    if (testNew("compareGrille", "test comparaison de grilles differentes", blocExecute)){
         char **grille1 = grilleNew();
         char **grille2 = grilleNew();
         if (lireFichier("../grilles/modeles/grilleFacile",grille1) == false){
@@ -455,13 +498,14 @@ int main(int argc, char **argv){
         grilleDelete(grille1);
         grilleDelete(grille2);
     }
-
+    
     //--------------------------------------------------------
     //
     //          tests copie de grille
     //
     //--------------------------------------------------------
-    if (testNew("copieGrile", "test copie de grilles")){
+    blocExecute = false;
+    if (testNew("copieGrile", "test copie de grilles", blocExecute)){
         char **grilleOrigine = grilleNew();
         char **grilleDestination = grilleNew();
         if (lireFichier("../grilles/modeles/grilleFacile",grilleOrigine) == false){
@@ -485,7 +529,8 @@ int main(int argc, char **argv){
     //          tests listes
     //
     //--------------------------------------------------------
-    if (testNew("testListeValide", "tests unicite dans une liste de 9 valeurs valide")){
+    blocExecute = false;
+    if (testNew("testListeValide", "tests unicite dans une liste de 9 valeurs valide", blocExecute)){
         char listeValeurValide[9]={'1','2','3','4','5','6','7','8','9'};
         if (testListeValide(listeValeurValide) == false){
             testErreur("erreur calcul unicite liste de valeurs valide");
@@ -494,7 +539,7 @@ int main(int argc, char **argv){
         }
     }
 
-    if (testNew("testListeValide", "tests unicite dans une liste de 9 valeurs invalide")){
+    if (testNew("testListeValide", "tests unicite dans une liste de 9 valeurs invalide", blocExecute)){
         char listeValeurInvalide[9]={'1','2','3','4','1','6','7','8','9'};
         if (testListeValide(listeValeurInvalide) == true){
             testErreur("erreur calcul unicite liste de valeurs invalide");
@@ -503,7 +548,7 @@ int main(int argc, char **argv){
         }
     }
 
-    if (testNew("testListeValide", "tests unicite dans une liste de 9 valeurs incomplete")){
+    if (testNew("testListeValide", "tests unicite dans une liste de 9 valeurs incomplete", blocExecute)){
         char listeValeurIncomplete[9]={'1',' ','3','4',' ','6','7','8','9'};
         if (testListeValide(listeValeurIncomplete) != true){
             testErreur("erreur calcul unicite liste incomplete de valeurs valide");
@@ -512,7 +557,7 @@ int main(int argc, char **argv){
         }
     }
 
-    if (testNew("grilleTestLigneValide", "test validité ligne (0) de 9 valeurs incomplete")){
+    if (testNew("grilleTestLigneValide", "test validité ligne (0) de 9 valeurs incomplete", blocExecute)){
         if (grilleTestLigneValide(grille,0) != true){
             testErreur("erreur calcul unicite liste incomplete de valeurs valide");
         } else {
@@ -520,7 +565,7 @@ int main(int argc, char **argv){
         }
     }
     
-    if (testNew("grilleTestLigneValide", "test validité ligne (6) de 9 valeurs incomplete")){
+    if (testNew("grilleTestLigneValide", "test validité ligne (6) de 9 valeurs incomplete", blocExecute)){
         if (grilleTestLigneValide(grille,6) != true){
             testErreur("erreur calcul unicite liste incomplete de valeurs valide");
         } else {
@@ -528,7 +573,7 @@ int main(int argc, char **argv){
         }
     }
     
-    if (testNew("grilleTestColonneValide", "test validité colonne (0) de 9 valeurs incomplete")){
+    if (testNew("grilleTestColonneValide", "test validité colonne (0) de 9 valeurs incomplete", blocExecute)){
         if (grilleTestColonneValide(grille,0) != true){
             testErreur("erreur calcul unicite liste incomplete de valeurs valide");
         } else {
@@ -536,7 +581,7 @@ int main(int argc, char **argv){
         }
     }
     
-    if (testNew("grilleTestColonneValide", "test validité colonne (6) de 9 valeurs incomplete")){
+    if (testNew("grilleTestColonneValide", "test validité colonne (6) de 9 valeurs incomplete", blocExecute)){
         if (grilleTestColonneValide(grille,6) != true){
             testErreur("erreur calcul unicite liste incomplete de valeurs valide");
         } else {
@@ -544,7 +589,7 @@ int main(int argc, char **argv){
         }
     }
 
-    if (testNew("grilleTestRegionValide", "test validité region (0,0) de 9 valeurs incomplete")){
+    if (testNew("grilleTestRegionValide", "test validité region (0,0) de 9 valeurs incomplete", blocExecute)){
         if (grilleTestRegionValide(grille,0,0) != true){
             testErreur("erreur calcul unicite liste incomplete de valeurs valide");
         } else {
@@ -552,7 +597,7 @@ int main(int argc, char **argv){
         }
     }
 
-    if (testNew("grilleTestRegionValide", "test validité region (1,2) de 9 valeurs incomplete")){
+    if (testNew("grilleTestRegionValide", "test validité region (1,2) de 9 valeurs incomplete", blocExecute)){
         if (grilleTestRegionValide(grille,1,2) != true){
             testErreur("erreur calcul unicite liste incomplete de valeurs valide");
         } else {
@@ -560,7 +605,7 @@ int main(int argc, char **argv){
         }
     }
 
-    if (testNew("grilleTestRegionValide", "test validité region (2,2) de 9 valeurs incomplete")){
+    if (testNew("grilleTestRegionValide", "test validité region (2,2) de 9 valeurs incomplete", blocExecute)){
         if (grilleTestRegionValide(grille,2,2) != true){
             testErreur("erreur calcul region (2,2) incomplete valide");
         } else {
@@ -568,7 +613,7 @@ int main(int argc, char **argv){
         }
     }
 
-    if (testNew("grilleTestRegionValide", "test validité region (0,0) de 9 valeurs complete")){
+    if (testNew("grilleTestRegionValide", "test validité region (0,0) de 9 valeurs complete", blocExecute)){
         lireFichier("bruno",grille);
         grilleSetValeur(grille,0,0,'2');
         grilleSetValeur(grille,0,1,'4');
@@ -584,7 +629,7 @@ int main(int argc, char **argv){
         }
     }
 
-    if (testNew("grilleTestRegionValide", "test validité region (0,0) de 9 valeurs complete invalide")){
+    if (testNew("grilleTestRegionValide", "test validité region (0,0) de 9 valeurs complete invalide", blocExecute)){
         lireFichier("bruno",grille);
         grilleSetValeur(grille,0,0,'2');
         grilleSetValeur(grille,0,1,'4');
@@ -605,7 +650,8 @@ int main(int argc, char **argv){
     //          tests fonction testJeu
     //
     //--------------------------------------------------------
-    if (testNew("testJeu", "fonction de test de jeu (0,0,'1',0) invalide")){
+    blocExecute = false;
+    if (testNew("testJeu", "fonction de test de jeu (0,0,'1',0) invalide", blocExecute)){
         lireFichier("../grilles/bruno",grille);
         if (testJeu(grille,0,0,'1',0) == true){
             testErreur("la valeur qui existe deja dans la ligne n'est pas detectee");
@@ -614,7 +660,7 @@ int main(int argc, char **argv){
         }
     }
 
-    if (testNew("testJeu", "tests de la fonction de test de jeu (0,0,'2',0) valide")){
+    if (testNew("testJeu", "tests de la fonction de test de jeu (0,0,'2',0) valide", blocExecute)){
         if (testJeu(grille,0,0,'2',0) == false){
             testErreur("test valide NOK");
         } else {
@@ -622,7 +668,7 @@ int main(int argc, char **argv){
         }
     }
 
-    if (testNew("testJeu", "tests de la fonction de test de jeu (0,0,'1',1) invalide")){
+    if (testNew("testJeu", "tests de la fonction de test de jeu (0,0,'1',1) invalide", blocExecute)){
         if (testJeu(grille,0,0,'1',1) == true){
             testErreur("test invalide NOK");
         } else {
@@ -630,7 +676,7 @@ int main(int argc, char **argv){
         }
     }
 
-    if (testNew("testJeu", "tests de la fonction de test de jeu (-1,0,'1',1) avec numero de ligne invalide")){
+    if (testNew("testJeu", "tests de la fonction de test de jeu (-1,0,'1',1) avec numero de ligne invalide", blocExecute)){
         if (testJeu(grille,-1,0,'1',1) == true){
             testErreur("test invalide NOK");
         } else {
@@ -638,7 +684,7 @@ int main(int argc, char **argv){
         }
     }
 
-    if (testNew("testJeu", "tests de la fonction de test de jeu (9,0,'1',1) avec numero de ligne invalide")){
+    if (testNew("testJeu", "tests de la fonction de test de jeu (9,0,'1',1) avec numero de ligne invalide", blocExecute)){
         if (testJeu(grille,9,0,'1',1) == true){
             testErreur("test invalide NOK");
         } else {
@@ -646,7 +692,7 @@ int main(int argc, char **argv){
         }
     }
 
-    if (testNew("testJeu", "tests de la fonction de test de jeu (0,-1,'1',1) avec numero de colonne invalide")){
+    if (testNew("testJeu", "tests de la fonction de test de jeu (0,-1,'1',1) avec numero de colonne invalide", blocExecute)){
         if (testJeu(grille,0,-1,'1',1) == true){
             testErreur("test invalide NOK");
         } else {
@@ -654,7 +700,7 @@ int main(int argc, char **argv){
         }
     }
 
-    if (testNew("testJeu", "tests de la fonction de test de jeu (0,9,'1',1) avec numero de colonne invalide")){
+    if (testNew("testJeu", "tests de la fonction de test de jeu (0,9,'1',1) avec numero de colonne invalide", blocExecute)){
         if (testJeu(grille,0,9,'1',1) == true){
             testErreur("test invalide NOK");
         } else {
@@ -662,7 +708,7 @@ int main(int argc, char **argv){
         }
     }
 
-    if (testNew("testJeu", "tests d'ecriture sur une case de la grille initiale (0,2,'7',1) ")){
+    if (testNew("testJeu", "tests d'ecriture sur une case de la grille initiale (0,2,'7',1) ", blocExecute)){
         lireFichier("../grilles/bruno",grille);
         if (testJeu(grille,0,2,'7',1) == true){
             testErreur("test invalide NOK");
@@ -671,7 +717,7 @@ int main(int argc, char **argv){
         }
     }
 
-    if (testNew("testJeu", "tests de modification d'une case (0,0,'2',1) puis (0,0,'4',1)")){
+    if (testNew("testJeu", "tests de modification d'une case (0,0,'2',1) puis (0,0,'4',1)", blocExecute)){
         lireFichier("../grilles/bruno",grille);
         if (testJeu(grille,0,0,'7',1) == true){
             if (testJeu(grille,0,0,'4',1) == true){
@@ -684,7 +730,7 @@ int main(int argc, char **argv){
         }
     }
 
-    if (testNew("testJeu", "tests jeu derniere valeur grille complete (8,8,'4',1)")){
+    if (testNew("testJeu", "tests jeu derniere valeur grille complete (8,8,'4',1)", blocExecute)){
         lireFichier("../grilles/modeles/grillePresquePleine",grille);
         if (testJeu(grille,8,8,'4',1) == true){
             grilleSetValeur(grille,8,8,'4');
@@ -698,17 +744,17 @@ int main(int argc, char **argv){
         }
     }
 
-
     //--------------------------------------------------------
     //
     //          fonction solve
     //
     //--------------------------------------------------------
-    if (testNew("solve", "tests resolution d'une grille valide manque 1 valeur")){
+    blocExecute = true;
+    if (testNew("solve", "tests resolution d'une grille valide manque 1 valeur", blocExecute)){
         lireFichier("../grilles/modeles/grillePresquePleine",grille);
         int nbSolutions = solve(grille, true);
         printf("Nombre de solutions trouvées = %d\n\n", nbSolutions);
-        if (nbSolutions == 1){
+        if (nbSolutions >= 1){
             if (grillePleine(grille)){
                 testOk();
             } else {
@@ -719,9 +765,11 @@ int main(int argc, char **argv){
         }
     }
 
-    if (testNew("solve", "tests resolution d'une grille valide manque 2 valeurs")){
+    if (testNew("solve", "tests resolution d'une grille valide manque 2 valeurs", blocExecute)){
         lireFichier("../grilles/modeles/grillePresquePleine1",grille);
-        if (solve(grille, true) == 1){
+        int nbSolutions = solve(grille, true);
+        printf("Nombre de solutions trouvées = %d\n\n", nbSolutions);
+        if (nbSolutions >= 1){
             if (grillePleine(grille)){
                 testOk();
             } else {
@@ -732,9 +780,11 @@ int main(int argc, char **argv){
         }
     }
 
-    if (testNew("solve", "tests resolution d'une grille valide manque 3 valeurs")){
+    if (testNew("solve", "tests resolution d'une grille valide manque 3 valeurs", blocExecute)){
         lireFichier("../grilles/modeles/grillePresquePleine2",grille);
-        if (solve(grille, true) == 1){
+        int nbSolutions = solve(grille, true);
+        printf("Nombre de solutions trouvées = %d\n\n", nbSolutions);
+        if (nbSolutions >= 1){
             if (grillePleine(grille)){
                 testOk();
             } else {
@@ -745,9 +795,11 @@ int main(int argc, char **argv){
         }
     }
 
-    if (testNew("solve", "tests resolution d'une grille facile")){
+    if (testNew("solve", "tests resolution d'une grille facile", blocExecute)){
         lireFichier("../grilles/modeles/grilleFacile",grille);
-        if (solve(grille, true) == 1){
+        int nbSolutions = solve(grille, true);
+        printf("Nombre de solutions trouvées = %d\n\n", nbSolutions);
+        if (nbSolutions >= 1){
             if (grillePleine(grille)){
                 testOk();
             } else {
@@ -758,9 +810,26 @@ int main(int argc, char **argv){
         }
     }
 
-    if (testNew("solve", "tests resolution d'une grille difficile")){
+    if (testNew("solve", "tests resolution d'une grille intermediaire", blocExecute)){
+        lireFichier("../grilles/modeles/grilleIntermediaire",grille);
+        int nbSolutions = solve(grille, true);
+        printf("Nombre de solutions trouvées = %d\n\n", nbSolutions);
+        if (nbSolutions >= 1){
+            if (grillePleine(grille)){
+                testOk();
+            } else {
+                testErreur("test NOK : la grille n'est pas finie");
+            }
+        } else {
+            testErreur("test NOK : solve n'a pas de solution");
+        }
+    }
+
+    if (testNew("solve", "tests resolution d'une grille difficile", blocExecute)){
         lireFichier("../grilles/modeles/grilleExpert",grille);
-        if (solve(grille, true) == 1){
+        int nbSolutions = solve(grille, true);
+        printf("Nombre de solutions trouvées = %d\n\n", nbSolutions);
+        if (nbSolutions >= 1){
             if (grillePleine(grille)){
                 testOk();
             } else {
@@ -776,7 +845,8 @@ int main(int argc, char **argv){
     //          generateur
     //
     //--------------------------------------------------------
-    if (testNew("generateur", "tests generation de liste de valeur")){
+    blocExecute = true;
+    if (testNew("generateur", "tests generation de liste de valeur", blocExecute)){
         char liste[9];
         initGenerateur(grille);
         genereListeValeur(liste);
@@ -787,7 +857,7 @@ int main(int argc, char **argv){
         }
     }
     
-    if (testNew("generateur", "tests generation 1000 nombres aléatoires")){
+    if (testNew("generateur", "tests generation 1000 nombres aléatoires", blocExecute)){
         initGenerateur(grille);
         bool testAleatoireOK = true;
         for (int i = 0 ; i < 1000 ; i++){
@@ -804,7 +874,7 @@ int main(int argc, char **argv){
         }
     }
     
-    if (testNew("generateur", "tests generation liste 9 valeurs differentes")){
+    if (testNew("generateur", "tests generation liste 9 valeurs differentes", blocExecute)){
         initGenerateur(grille);
         char listeValeurs[9];
         genereListeValeur(listeValeurs);
@@ -814,8 +884,8 @@ int main(int argc, char **argv){
             testErreur("test NOK : liste nombres aléatoire genere invalide");
         }
     }
-    
-    if (testNew("generateur", "tests generation d'une grille")){
+
+    if (testNew("generateur", "tests generation d'une grille", blocExecute)){
         initGenerateur(grille);
         char **grille = grilleNew();
         if (generateur(grille)){

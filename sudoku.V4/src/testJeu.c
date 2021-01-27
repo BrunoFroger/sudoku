@@ -13,7 +13,7 @@
 //--------------------------------------------------------
 int testJeu(char **grille, int ligne, int colonne, char valeur, int silence){
     if (silence == 0) printf("\n\n---------------------------------------------------\n");
-    printf("TestJeu => verification de la valeur %c en %d,%d\n", valeur, ligne, colonne);
+    if (silence == 0) printf("TestJeu => verification de la valeur %c en %d,%d\n", valeur, ligne, colonne);
     //getchar();
 
     // test si on essaie de modifier une valeur de la grille d'origine
@@ -21,7 +21,7 @@ int testJeu(char **grille, int ligne, int colonne, char valeur, int silence){
         if (silence == 0) printf("ERREUR : impossible de modifier une valeur initiale %d,%d(%c)\n", ligne, colonne, valeur);
         return 0;
     } else {
-        printf("TestJeu => on ne modifie pas une valeur initiale\n");
+        if (silence == 0) printf("TestJeu => ce n'est pas une valeur initiale\n");
     }
 
     // test si ligne entre 0 et 8
@@ -29,7 +29,7 @@ int testJeu(char **grille, int ligne, int colonne, char valeur, int silence){
         if (silence == 0) printf("ERREUR : ligne (%d) n'est pas entre 1 et 9\n", ligne);
         return 0;
     } else {
-        printf("TestJeu => numero de ligne valide\n");
+        if (silence == 0) printf("TestJeu => numero de ligne valide\n");
     }
 
     // test si colonne entre 0 et 8
@@ -37,7 +37,7 @@ int testJeu(char **grille, int ligne, int colonne, char valeur, int silence){
         if (silence == 0) printf("ERREUR : colonne (%d) n'est pas entre 1 et 9\n", colonne);
         return 0;
     } else {
-        printf("TestJeu => numero de colonne valide\n");
+        if (silence == 0) printf("TestJeu => numero de colonne valide\n");
     }
 
     // test si valeur entre 1 et 9
@@ -45,7 +45,7 @@ int testJeu(char **grille, int ligne, int colonne, char valeur, int silence){
         if (silence == 0) printf("ERREUR : valeur (%c) n'est pas entre 1 et 9\n", valeur);
         return 0;
     } else {
-        printf("TestJeu => numero de valeur valide\n");
+        if (silence == 0) printf("TestJeu => numero de valeur valide\n");
     }
 
     // test si la saisie se fait dans une case vide
@@ -53,7 +53,7 @@ int testJeu(char **grille, int ligne, int colonne, char valeur, int silence){
         if (silence == 0) printf("ERREUR : case %d,%d deja occupee par le chiffre %c\n", ligne+1, colonne+1, grille[ligne][colonne]);
         return 0;
     } else {
-        printf("TestJeu => saisie dans une case vide valide\n");
+        if (silence == 0) printf("TestJeu => saisie dans une case vide valide\n");
     }
 
     // test si la valeur saisie n'est pas deja dans la ligne
@@ -63,7 +63,7 @@ int testJeu(char **grille, int ligne, int colonne, char valeur, int silence){
         if (silence == 0) printf("ERREUR : cette valeur (%c en %d,%d) est deja dans la ligne \n", valeur, ligne, colonne);
         return 0;
     } else {
-        printf("TestJeu => toutes les valeur de la ligne sont valide\n");
+        if (silence == 0) printf("TestJeu => toutes les valeur de la ligne sont valide\n");
     }
 
     // test si la valeur saisie n'est pas deja dans la colonne
@@ -71,7 +71,7 @@ int testJeu(char **grille, int ligne, int colonne, char valeur, int silence){
         if (silence == 0) printf("ERREUR : cette valeur est deja dans la colonne\n");
         return 0;
     } else {
-        printf("TestJeu => toutes les valeur de la colonne sont valide\n");
+        if (silence == 0) printf("TestJeu => toutes les valeur de la colonne sont valide\n");
     }
 
     // test si la valeur dans la region
@@ -82,7 +82,7 @@ int testJeu(char **grille, int ligne, int colonne, char valeur, int silence){
         if (silence == 0) printf("region %d,%d invalide\n",indexLigneCarre, indexColonneCarre);
         return 0;
     } else {
-        printf("TestJeu => toutes les valeur de la region sont valide\n");
+        if (silence == 0) printf("TestJeu => toutes les valeur de la region sont valide\n");
     }
     /*
     int DebutLigne = indexLigneCarre * 3;
