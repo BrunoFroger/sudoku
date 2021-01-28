@@ -204,7 +204,7 @@ int main(int argc, char **argv){
     //          tests creation/suppression de grille
     //
     //--------------------------------------------------------
-    blocExecute = false;
+    blocExecute = true;
     if (testNew("grilleDelete", "suppression d'une grille qui n'existe pas", blocExecute)){
         if (grilleDelete(grille) != false){
             testErreur("erreur suppression d'une grille qui existe");
@@ -252,7 +252,7 @@ int main(int argc, char **argv){
     //          tests lecture / ecriture de grilles
     //
     //--------------------------------------------------------
-    blocExecute = false;
+    blocExecute = true;
     if (testNew("lireFichier", "lecture de fichier modele valide", blocExecute)){
         char nomFichier[50] = "../grilles/modeles/grilleFacile";
         if (lireFichier(nomFichier, grille) == false){
@@ -283,7 +283,7 @@ int main(int argc, char **argv){
     //          tests grille pleine ou non pleine
     //
     //--------------------------------------------------------
-    blocExecute = false;
+    blocExecute = true;
     if (testNew("grillePleine", "test grille pleine sur grille non pleine", blocExecute)){
         lireFichier("../grilles/modele/facile", grille);
         if (grillePleine(grille) == false){
@@ -310,7 +310,7 @@ int main(int argc, char **argv){
     //          tests set/reset valeurs
     //
     //--------------------------------------------------------
-    blocExecute = false;
+    blocExecute = true;
     if (testNew("grilleSetValeur", "test set valeur dans une case vide", blocExecute)){
         char **grille = grilleNew();
         initGrilleInitiale();
@@ -370,7 +370,7 @@ int main(int argc, char **argv){
     //          tests validite de grille
     //
     //--------------------------------------------------------
-    blocExecute = false;
+    blocExecute = true;
     if (testNew("grilleValide", "test grille valide sur grille vide", blocExecute)){
         char **grilleTmp = grilleNew();
         if (grilleValide(grilleTmp,false) == false){
@@ -462,7 +462,7 @@ int main(int argc, char **argv){
     //          tests comparaison de grilles
     //
     //--------------------------------------------------------
-    blocExecute = false;
+    blocExecute = true;
     if (testNew("compareGrille", "test comparaison de grilles identiques", blocExecute)){
         char **grille1 = grilleNew();
         char **grille2 = grilleNew();
@@ -504,7 +504,7 @@ int main(int argc, char **argv){
     //          tests copie de grille
     //
     //--------------------------------------------------------
-    blocExecute = false;
+    blocExecute = true;
     if (testNew("copieGrile", "test copie de grilles", blocExecute)){
         char **grilleOrigine = grilleNew();
         char **grilleDestination = grilleNew();
@@ -529,7 +529,7 @@ int main(int argc, char **argv){
     //          tests listes
     //
     //--------------------------------------------------------
-    blocExecute = false;
+    blocExecute = true;
     if (testNew("testListeValide", "tests unicite dans une liste de 9 valeurs valide", blocExecute)){
         char listeValeurValide[9]={'1','2','3','4','5','6','7','8','9'};
         if (testListeValide(listeValeurValide) == false){
@@ -650,7 +650,7 @@ int main(int argc, char **argv){
     //          tests fonction testJeu
     //
     //--------------------------------------------------------
-    blocExecute = false;
+    blocExecute = true;
     if (testNew("testJeu", "fonction de test de jeu (0,0,'1',0) invalide", blocExecute)){
         lireFichier("../grilles/bruno",grille);
         if (testJeu(grille,0,0,'1',0) == true){
@@ -827,7 +827,7 @@ int main(int argc, char **argv){
 
     if (testNew("solve", "tests resolution d'une grille difficile", blocExecute)){
         lireFichier("../grilles/modeles/grilleExpert",grille);
-        int nbSolutions = solve(grille, true);
+        int nbSolutions = solve(grille, false);
         printf("Nombre de solutions trouvées = %d\n\n", nbSolutions);
         if (nbSolutions >= 1){
             if (grillePleine(grille)){
@@ -885,7 +885,7 @@ int main(int argc, char **argv){
         }
     }
 
-    if (testNew("generateur", "tests generation d'une grille", blocExecute)){
+    if (testNew("generateur", "tests generation d'une grille", false)){
         initGenerateur(grille);
         char **grille = grilleNew();
         if (generateur(grille)){

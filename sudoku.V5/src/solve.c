@@ -98,7 +98,7 @@ void bilanSolve(void){
     printf("Bilan recherche de solutions \n");
     printf("  nombre d'invocations       = %d\n", nbSolveInvocations);
     printf("  nombre solutions trouvees  = %d\n", nbSolutions);
-    printf("  temps de resolution (ms)   = %f\n", (float)clockTime/CLOCKS_PER_SEC*1000);
+    printf("  temps de resolution (ms)   = %.2f\n", (float)clockTime/CLOCKS_PER_SEC*1000);
 }
 
 //--------------------------------------------------------
@@ -113,11 +113,11 @@ int solve(char **grille, bool modeSilence){
     grilleResultat = grilleNew();
     initSolve();
     //calculSolve(grille, 0, 0, modeSilence);
-    calculSolve(grille, 0, 0, modeSilence);
+    calculSolve(grille, 0, 0, true);
     clockTime = clock() - clockTime;
     if (!modeSilence){
-        printf("\n");
         bilanSolve();
+        printf("\n");
     }
     // restauration de la grille resultat dans la grille
     for (int i = 0 ; i < 9 ; i++){
